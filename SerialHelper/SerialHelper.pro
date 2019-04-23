@@ -21,9 +21,10 @@ HEADERS  += mainwindow.h \
     frminput.h \
     frmnum.h
 
-FORMS    += mainwindow.ui \
+FORMS    += \
     frminput.ui \
-    frmnum.ui
+    frmnum.ui \
+    mainwindow.ui
 
 CONFIG += mobility
 MOBILITY = 

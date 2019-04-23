@@ -16,12 +16,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+private slots:
+    void readread();
+    void on_SerialOnoffBUtton_clicked();
+
 private:
     QSerialPort *port;
     Ui::MainWindow *ui;
-    bool b;
-    void showformat(const QByteArray &arr);
-    void sendformat(const QString &strdata);
+    bool serial_open_status;
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
@@ -36,20 +38,6 @@ private:
             return QSerialPort::Data8;
         }
     }
-private slots:
-    void readread();
-    void on_pushButtonopen_clicked();
-    void on_checkBoxtextformat_stateChanged(int arg1);
-    void on_pushButtonsend_clicked();
-    void on_pushButtonclear_clicked();
-    void on_pushButtonhelp_clicked();
-    void on_checkBoxsendformat_stateChanged(int arg1);
-    void on_pushButtoncleasend_clicked();
-    void on_radioButtonsendauto_clicked();
-    void on_radioButtonreadauto_clicked();
-    void on_radioButtonsendformat_clicked();
-    void on_radioButtonreadformat_clicked();
-    void on_comboBoxserial_currentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H

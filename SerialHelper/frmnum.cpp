@@ -13,6 +13,7 @@ frmNum::frmNum(QWidget *parent) :
     this->ChangeStyle();
 }
 
+
 frmNum::~frmNum()
 {
     delete ui;
