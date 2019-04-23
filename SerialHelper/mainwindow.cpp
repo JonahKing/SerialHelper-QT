@@ -37,8 +37,8 @@ void MainWindow::readread()
         start_time = current_time;
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        ui->textBrowser->setTextColor(0xFF0000);
-        ui->textBrowser->insertPlainText(strBuffer);
+        ui->ReceiveDataBrowser->setTextColor(0xFF0000);
+        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
     }
 
     QString str;
@@ -46,8 +46,8 @@ void MainWindow::readread()
     {
         str+= QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
     }
-    ui->textBrowser->setTextColor(Qt::black);
-    ui->textBrowser->insertPlainText(str);
+    ui->ReceiveDataBrowser->setTextColor(Qt::black);
+    ui->ReceiveDataBrowser->insertPlainText(str);
 
 }
 void MainWindow::on_SerialOnoffBUtton_clicked()
