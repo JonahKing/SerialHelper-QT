@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-
+#include "serialconfig.h"
 namespace Ui {
 class MainWindow;
 }
@@ -22,11 +22,14 @@ private slots:
 
     void on_REceiveStopButton_clicked();
 
+    void on_FrameDuration_editingFinished();
+
+    void on_SendDataButton2_clicked();
+
 private:
     QSerialPort *port;
     Ui::MainWindow *ui;
-    bool serial_open_status;
-    bool stop_display;
+    SerialConfig *serial_config;
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
