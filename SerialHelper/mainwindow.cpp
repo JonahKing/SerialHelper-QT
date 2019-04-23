@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     serial_open_status = false;
+    stop_display = false;
     port=new QSerialPort;
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
@@ -38,7 +39,11 @@ void MainWindow::readread()
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
         ui->ReceiveDataBrowser->setTextColor(0xFF0000);
-        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+
+        if(true != stop_display)
+        {
+            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+        }
     }
 
     QString str;
@@ -46,8 +51,11 @@ void MainWindow::readread()
     {
         str+= QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
     }
-    ui->ReceiveDataBrowser->setTextColor(Qt::black);
-    ui->ReceiveDataBrowser->insertPlainText(str);
+    if(true != stop_display)
+    {
+        ui->ReceiveDataBrowser->setTextColor(Qt::black);
+        ui->ReceiveDataBrowser->insertPlainText(str);
+    }
 
 }
 void MainWindow::on_SerialOnoffBUtton_clicked()
@@ -80,5 +88,18 @@ void MainWindow::on_SerialOnoffBUtton_clicked()
             ui->SerialOnoffBUtton->setText("打开失败！");
             ui->SerialOnoffIcon->setStyleSheet("border-image: url(:/new/img/red.png);");
         }
+    }
+}
+
+void MainWindow::on_REceiveStopButton_clicked()
+{
+    stop_display = !stop_display;
+    if(true == stop_display)
+    {
+         ui->REceiveStopButton->setText("继续显示");
+    }
+    else
+    {
+        ui->REceiveStopButton->setText("暂停显示");
     }
 }

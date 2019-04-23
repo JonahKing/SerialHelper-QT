@@ -20,10 +20,13 @@ private slots:
     void readread();
     void on_SerialOnoffBUtton_clicked();
 
+    void on_REceiveStopButton_clicked();
+
 private:
     QSerialPort *port;
     Ui::MainWindow *ui;
     bool serial_open_status;
+    bool stop_display;
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
