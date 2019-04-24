@@ -4,6 +4,7 @@
 #include <QTextCodec>
 #include <QDebug>
 #include <QTime>
+#include <QTimer>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -14,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent) :
     port=new QSerialPort;
 
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
-
 
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::const_iterator iter;
@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
 
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
 }
 MainWindow::~MainWindow()
 {
@@ -41,6 +43,7 @@ void MainWindow::readread()
     QDateTime current_data = QDateTime::currentDateTime();
     static QTime  start_time = QTime ::currentTime();
     QTime  current_time =QTime ::currentTime();
+
     if(start_time.msecsTo(current_time) > serial_config->receive_frame_duration)
     {
         start_time = current_time;
@@ -117,6 +120,42 @@ void MainWindow::on_FrameDuration_editingFinished()
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
 }
 
+void MainWindow::on_SendDataButton1_clicked()
+{
+    if(!port->isOpen())
+    {
+        return;
+    }
+    {
+        QString str=ui->SendDataEditLIne1->text();
+        QStringList strlist=str.trimmed().split(" ");
+        QByteArray arr;
+        for(int i=0;i<strlist.count();++i)
+        {
+            bool bl=false;
+            QString ch=strlist.at(i);
+            uchar byte=(uchar)ch.toInt(&bl,16);
+            if(!bl)
+            {
+                return;
+            }
+            arr.append(byte);
+        }
+        port->write(arr);
+        QDateTime current_data = QDateTime::currentDateTime();
+        QTime  current_time =QTime ::currentTime();
+        QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
+                + current_time.toString("hh:mm:ss:zzz")+"  :  ";
+        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+
+        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+        ui->ReceiveDataBrowser->insertPlainText(str);
+    }
+
+}
+
+
 void MainWindow::on_SendDataButton2_clicked()
 {
     if(!port->isOpen())
@@ -151,3 +190,176 @@ void MainWindow::on_SendDataButton2_clicked()
     }
 
 }
+
+void MainWindow::on_SendDataButton3_clicked()
+{
+    if(!port->isOpen())
+    {
+        return;
+    }
+    {
+        QString str=ui->SendDataEditLIne3->text();
+        QStringList strlist=str.trimmed().split(" ");
+        QByteArray arr;
+        for(int i=0;i<strlist.count();++i)
+        {
+            bool bl=false;
+            QString ch=strlist.at(i);
+            uchar byte=(uchar)ch.toInt(&bl,16);
+            if(!bl)
+            {
+                return;
+            }
+            arr.append(byte);
+        }
+        port->write(arr);
+        QDateTime current_data = QDateTime::currentDateTime();
+        QTime  current_time =QTime ::currentTime();
+        QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
+                + current_time.toString("hh:mm:ss:zzz")+"  :  ";
+        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+
+        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+        ui->ReceiveDataBrowser->insertPlainText(str);
+
+
+    }
+}
+
+void MainWindow::on_ReceiveDataBrowser_textChanged()
+{
+    ui->ReceiveDataBrowser->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::on_SendDataTimming1_stateChanged(int arg1)
+{
+    if(Qt::Checked == arg1)
+    {    
+        serial_config->current_timming_index = 1;
+        serial_config->send_data_timming1 = true;
+        int temp = ui->SendDurationEditLine1->text().toInt();
+        timer->start(temp);
+    }
+    else
+    {
+        serial_config->send_data_timming1 = false;
+    }
+}
+
+void MainWindow::TimerSend(void)
+{
+    int temp = 1000;
+    if(1 == serial_config->current_timming_index)
+    {
+        on_SendDataButton1_clicked();
+        if(serial_config->send_data_timming2)
+        {
+            temp = ui->SendDurationEditLine2->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 2;
+        }
+        else if(serial_config->send_data_timming3)
+        {
+            temp = ui->SendDurationEditLine3->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 3;
+        }
+        else if(serial_config->send_data_timming1)
+        {
+            temp = ui->SendDurationEditLine1->text().toInt();
+            timer->start(temp);
+
+        }
+        else
+        {
+            timer->stop();
+        }
+
+    }
+    else if(2 == serial_config->current_timming_index)
+    {
+        on_SendDataButton2_clicked();
+        if(serial_config->send_data_timming3)
+        {
+            temp = ui->SendDurationEditLine3->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 3;
+        }
+        else if(serial_config->send_data_timming1)
+        {
+            temp = ui->SendDurationEditLine1->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 1;
+        }
+        else if(serial_config->send_data_timming2)
+        {
+            temp = ui->SendDurationEditLine2->text().toInt();
+            timer->start(temp);
+        }
+        else
+        {
+            timer->stop();
+        }
+
+    }
+    else if(3 == serial_config->current_timming_index)
+    {
+        on_SendDataButton3_clicked();
+        if(serial_config->send_data_timming1)
+        {
+            temp = ui->SendDurationEditLine1->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 1;
+        }
+        else if(serial_config->send_data_timming2)
+        {
+            temp = ui->SendDurationEditLine2->text().toInt();
+            timer->start(temp);
+            serial_config->current_timming_index = 2;
+        }
+        else if(serial_config->send_data_timming3)
+        {
+            temp = ui->SendDurationEditLine3->text().toInt();
+            timer->start(temp);
+        }
+        else
+        {
+            timer->stop();
+        }
+
+    }
+
+}
+
+
+void MainWindow::on_SendDataTimming2_stateChanged(int arg1)
+{
+    if(Qt::Checked == arg1)
+    {
+        serial_config->current_timming_index = 2;
+        serial_config->send_data_timming2 = true;
+        int temp = ui->SendDurationEditLine2->text().toInt();
+        timer->start(temp);
+    }
+    else
+    {
+        serial_config->send_data_timming2 = false;
+    }
+}
+
+void MainWindow::on_SendDataTimming3_stateChanged(int arg1)
+{
+    if(Qt::Checked == arg1)
+    {
+        serial_config->current_timming_index = 3;
+        serial_config->send_data_timming3 = true;
+        int temp = ui->SendDurationEditLine3->text().toInt();
+        timer->start(temp);
+    }
+    else
+    {
+        serial_config->send_data_timming3 = false;
+    }
+}
+

@@ -26,10 +26,25 @@ private slots:
 
     void on_SendDataButton2_clicked();
 
+    void on_SendDataButton1_clicked();
+
+    void on_SendDataButton3_clicked();
+
+    void on_ReceiveDataBrowser_textChanged();
+
+    void on_SendDataTimming1_stateChanged(int arg1);
+
+    void TimerSend(void);
+    void on_SendDataTimming2_stateChanged(int arg1);
+
+    void on_SendDataTimming3_stateChanged(int arg1);
+
+
 private:
     QSerialPort *port;
     Ui::MainWindow *ui;
     SerialConfig *serial_config;
+    QTimer *timer;
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
