@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
     connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
-
+    connect(ui->Save,SIGNAL(triggered()),this,SLOT(saveFileSlot()));
 
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::const_iterator iter;
@@ -404,7 +404,7 @@ void MainWindow::readFile(){
                 ui->ReceiveDataBrowser->moveCursor(QTextCursor::Start);
             }
             //已读完
-            //fileContent = ui->ReceiveDataBrowser->document()->toPlainText();
+            fileContent = ui->ReceiveDataBrowser->document()->toPlainText();
 
             if(fileName.lastIndexOf("\\") != -1){
                 //设置标题
@@ -424,4 +424,39 @@ void MainWindow::readFile(){
             box.exec();
         }
     }
+}
+void MainWindow::saveFileSlot(){
+    //判断是新建还是读取的文本
+
+    if(fileName.isEmpty()){//新建
+        //弹出保存文件对话框
+        fileName = QFileDialog::getSaveFileName(this, tr("打开文件"),QDir::homePath(),tr("文本文件 (*.*);;"));
+        if(!fileName.isEmpty()){
+            //保存文件
+            this->saveTextToFile();
+
+        }
+    }else{//读取的文本
+        this->saveTextToFile();
+    }
+
+}
+//保存文件
+void MainWindow::saveTextToFile(){
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly)){
+        QTextStream out(&file);
+        out << ui->ReceiveDataBrowser->toPlainText();
+        file.close();
+        this->setWindowTitle(fileName.mid(fileName.lastIndexOf('/')+1)+" - 记事本");
+        fileContent = ui->ReceiveDataBrowser->document()->toPlainText();
+        //ui->statusBar->showMessage("已保存",3000);
+    }else{
+        QMessageBox box(QMessageBox::Question,"提示","保存文件失败！");
+        box.setIcon(QMessageBox::Warning);
+        box.setStandardButtons (QMessageBox::Ok);
+        box.setButtonText (QMessageBox::Ok,QString("确定"));
+        box.exec();
+    }
+
 }

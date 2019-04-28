@@ -791,5 +791,21 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ReceiveDataClearButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ReceiveDataBrowser</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>387</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>497</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

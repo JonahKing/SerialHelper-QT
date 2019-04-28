@@ -40,14 +40,16 @@ private slots:
     void on_SendDataTimming3_stateChanged(int arg1);
 
     void openFileSlot();
-
+    void saveFileSlot();
 private:
     QSerialPort *port;
     Ui::MainWindow *ui;
     SerialConfig *serial_config;
     QTimer *timer;
      QString fileName;
+     QString fileContent;//读到的文件内容
      void readFile();
+     void saveTextToFile();
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
