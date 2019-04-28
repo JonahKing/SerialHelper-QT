@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
+#include <QFileDialog>
+#include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -15,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     port=new QSerialPort;
 
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
+    connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
+
 
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::const_iterator iter;
@@ -24,9 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     QList<QByteArray>list  =  QTextCodec::availableCodecs();
 
-
     ui->SerialOnoffIcon->setStyleSheet("border-image: url(:/new/img/red.png);");
-    ui->FrameDuration->setValidator(new QIntValidator(50,5000,this));
+    ui->FrameDuration->setValidator(new QIntValidator(10,5000,this));
 
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
 
@@ -146,11 +149,14 @@ void MainWindow::on_SendDataButton1_clicked()
         QTime  current_time =QTime ::currentTime();
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+        if(!serial_config->stop_display)
+        {
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
 
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(str);
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(str);
+        }
     }
 
 }
@@ -182,11 +188,14 @@ void MainWindow::on_SendDataButton2_clicked()
         QTime  current_time =QTime ::currentTime();
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+        if(!serial_config->stop_display)
+        {
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
 
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(str);
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(str);
+        }
     }
 
 }
@@ -213,15 +222,20 @@ void MainWindow::on_SendDataButton3_clicked()
             arr.append(byte);
         }
         port->write(arr);
+
+
         QDateTime current_data = QDateTime::currentDateTime();
         QTime  current_time =QTime ::currentTime();
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+        if(!serial_config->stop_display)
+        {
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
 
-        ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-        ui->ReceiveDataBrowser->insertPlainText(str);
+            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+            ui->ReceiveDataBrowser->insertPlainText(str);
+        }
 
 
     }
@@ -363,3 +377,51 @@ void MainWindow::on_SendDataTimming3_stateChanged(int arg1)
     }
 }
 
+
+
+
+void MainWindow::openFileSlot()
+{
+        fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),QDir::homePath(),tr("文本文件 (*.*);;"));
+        this->readFile();
+}
+
+void MainWindow::readFile(){
+
+    //得到路径不为空
+    if(!fileName.isEmpty()){
+        QFile *file = new QFile;
+        file->setFileName(fileName);
+
+        bool isOpen = file->open(QIODevice::ReadOnly);
+        if(isOpen){
+            ui->ReceiveDataBrowser->clear();
+            QTextStream in(file);
+
+            while (!in.atEnd()) {
+                ui->ReceiveDataBrowser->append(in.readLine());
+                //光标移动到开始位置
+                ui->ReceiveDataBrowser->moveCursor(QTextCursor::Start);
+            }
+            //已读完
+            //fileContent = ui->ReceiveDataBrowser->document()->toPlainText();
+
+            if(fileName.lastIndexOf("\\") != -1){
+                //设置标题
+                this->setWindowTitle(fileName.mid(fileName.lastIndexOf('\\')+1)+" - 记事本");
+            }else{
+                //设置标题
+                this->setWindowTitle(fileName.mid(fileName.lastIndexOf('/')+1)+" - 记事本");
+            }
+
+            file->close();
+            //ui->statusBar->showMessage("");
+        }else{
+            QMessageBox box(QMessageBox::Question,"提示","打开文件失败！");
+            box.setIcon(QMessageBox::Warning);
+            box.setStandardButtons (QMessageBox::Ok);
+            box.setButtonText (QMessageBox::Ok,QString("确定"));
+            box.exec();
+        }
+    }
+}
