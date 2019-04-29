@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    serialconfig.cpp
+    serialconfig.cpp \
+    autoreplywindows.cpp
 
 HEADERS  += mainwindow.h \
-    serialconfig.h
+    serialconfig.h \
+    autoreplywindows.h
 
 FORMS    += \
-    mainwindow.ui
+    mainwindow.ui \
+    autoreplywindows.ui
 
 CONFIG += mobility
 MOBILITY = 

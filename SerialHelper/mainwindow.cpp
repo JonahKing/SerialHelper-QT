@@ -7,6 +7,9 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QMessageBox>
+
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -15,10 +18,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     serial_config = new SerialConfig;
     port=new QSerialPort;
+p_auto_reply_windows = new AutoReplyWindows(this);
 
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
     connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
     connect(ui->Save,SIGNAL(triggered()),this,SLOT(saveFileSlot()));
+    connect(ui->AutoReply,SIGNAL(triggered()),p_auto_reply_windows,SLOT(show()));
+
 
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::const_iterator iter;
@@ -32,6 +38,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->FrameDuration->setValidator(new QIntValidator(10,5000,this));
 
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
+
+
+
+
+
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));

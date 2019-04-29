@@ -665,11 +665,12 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_5"/>
     <addaction name="action_6"/>
    </widget>
-   <widget class="QMenu" name="menu_3">
+   <widget class="QMenu" name="Setting">
     <property name="title">
      <string>设置</string>
     </property>
     <addaction name="Advanced"/>
+    <addaction name="AutoReply"/>
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
@@ -685,7 +686,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="FIle"/>
    <addaction name="menu_2"/>
    <addaction name="menu_5"/>
-   <addaction name="menu_3"/>
+   <addaction name="Setting"/>
    <addaction name="menu_4"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -737,6 +738,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_8">
    <property name="text">
     <string>文档</string>
+   </property>
+  </action>
+  <action name="AutoReply">
+   <property name="text">
+    <string>自动回复</string>
    </property>
   </action>
  </widget>
