@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::AutoReplyWindows *ui;
+private slots:
+    void settingTableChanged(int row, int col);
+    void test(void);
 };
 
 #endif // AUTOREPLYWINDOWS_H
