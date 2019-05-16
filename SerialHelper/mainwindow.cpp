@@ -26,6 +26,9 @@ p_auto_reply_windows = new AutoReplyWindows(this);
     connect(ui->AutoReply,SIGNAL(triggered()),p_auto_reply_windows,SLOT(show()));
 
 
+
+
+
     QList<QSerialPortInfo> strlist=QSerialPortInfo::availablePorts();
     QList<QSerialPortInfo>::const_iterator iter;
     for(iter=strlist.constBegin();iter!=strlist.constEnd();++iter)
@@ -39,9 +42,16 @@ p_auto_reply_windows = new AutoReplyWindows(this);
 
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
 
+    QRegExp rx("[a-fA-F0-9 ]{160}");
+    QRegExpValidator *validator = new QRegExpValidator(rx, this);
+    ui->SendDataEditLIne1->setValidator(validator);
+    ui->SendDataEditLIne2->setValidator(validator);
+    ui->SendDataEditLIne3->setValidator(validator);
 
 
-
+    connect(ui->SendDataEditLIne1,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged(QString)));
+    connect(ui->SendDataEditLIne2,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged( QString )));
+    connect(ui->SendDataEditLIne3,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged( QString)));
 
 
     timer = new QTimer(this);
@@ -450,7 +460,6 @@ void MainWindow::saveFileSlot(){
     }else{//读取的文本
         this->saveTextToFile();
     }
-
 }
 //保存文件
 void MainWindow::saveTextToFile(){
@@ -470,4 +479,27 @@ void MainWindow::saveTextToFile(){
         box.exec();
     }
 
+}
+
+void MainWindow::SendDataEditLIne_textChanged(const QString &arg1)
+{
+    QString str_source=arg1;//ui->SendDataEditLIne1->text();
+    QString str_des;
+    int count = 0;
+    str_source = str_source.remove(QRegExp("\\s"));
+
+    for(int i = 0; i <str_source.length();i++ )
+    {
+        str_des += str_source.at(i).toUpper();
+        //if(operator!=(QChar::Space,str_source.at(i)))
+        {
+            count++;
+        }
+        if(0 == (i+1)%2)
+        {
+               str_des += " ";
+        }
+    }
+    //ui->SendDataEditLIne1->setText(str_des);
+    ((QLineEdit*)sender())->setText(str_des);
 }

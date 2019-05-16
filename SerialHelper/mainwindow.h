@@ -69,6 +69,7 @@ private slots:
 
     void openFileSlot();
     void saveFileSlot();
+    void SendDataEditLIne_textChanged(const QString &arg1);
 };
 
 #endif // MAINWINDOW_H
