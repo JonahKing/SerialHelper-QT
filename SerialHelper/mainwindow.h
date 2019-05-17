@@ -30,6 +30,10 @@ private:
 
      void readFile();
      void saveTextToFile();
+     void ParameterInit(void);
+     void ParameterSave(QString Type, QString p);
+
+
     inline QSerialPort::DataBits getbit(int bit)        //
     {
         switch (bit)
@@ -70,6 +74,9 @@ private slots:
     void openFileSlot();
     void saveFileSlot();
     void SendDataEditLIne_textChanged(const QString &arg1);
+
+
+    void on_FrameDuration_textChanged(const QString &arg1);
 };
 
 #endif // MAINWINDOW_H

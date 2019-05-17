@@ -7,7 +7,8 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QMessageBox>
-
+#include <QSettings>
+#include <QtDebug>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -56,11 +57,32 @@ p_auto_reply_windows = new AutoReplyWindows(this);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
+
+    ParameterInit();
+
+
 }
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+void MainWindow::ParameterInit()
+{
+    //this->setWindowTitle("初始化成功");
+    QSettings settings("ICConfig.ini", QSettings::IniFormat);
+    ui->SendDataEditLIne1->setText(settings.value("SendDataEditLIne1").toString());
+    ui->SendDataEditLIne2->setText(settings.value("SendDataEditLIne2").toString());
+    ui->SendDataEditLIne3->setText(settings.value("SendDataEditLIne3").toString());
+    ui->FrameDuration->setText(settings.value("FrameDuration").toString());
+}
+void MainWindow::ParameterSave(QString Type, QString p)
+{
+    QSettings settings("ICConfig.ini", QSettings::IniFormat);
+
+    settings.setValue(Type,p);
+}
+
+
 void MainWindow::readread()
 {
     QByteArray arr= port->readAll();
@@ -399,8 +421,6 @@ void MainWindow::on_SendDataTimming3_stateChanged(int arg1)
 }
 
 
-
-
 void MainWindow::openFileSlot()
 {
         fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),QDir::homePath(),tr("文本文件 (*.*);;"));
@@ -502,4 +522,21 @@ void MainWindow::SendDataEditLIne_textChanged(const QString &arg1)
     }
     //ui->SendDataEditLIne1->setText(str_des);
     ((QLineEdit*)sender())->setText(str_des);
+    if(ui->SendDataEditLIne1 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne1",str_des);
+    }
+    if(ui->SendDataEditLIne2 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne2",str_des);
+    }
+    if(ui->SendDataEditLIne3 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne3",str_des);
+    }
+}
+
+void MainWindow::on_FrameDuration_textChanged(const QString &arg1)
+{
+    ParameterSave("FrameDuration",arg1);
 }
