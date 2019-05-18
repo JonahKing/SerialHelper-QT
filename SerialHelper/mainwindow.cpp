@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     serial_config = new SerialConfig;
     port=new QSerialPort;
-p_auto_reply_windows = new AutoReplyWindows(this);
+    p_auto_reply_windows = new AutoReplyWindows(this);
 
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
     connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
@@ -49,11 +49,37 @@ p_auto_reply_windows = new AutoReplyWindows(this);
     ui->SendDataEditLIne2->setValidator(validator);
     ui->SendDataEditLIne3->setValidator(validator);
 
+    ui->FrameFilterEdit1->setValidator(validator);
+    ui->FrameFilterEdit2->setValidator(validator);
+    ui->FrameFilterEdit3->setValidator(validator);
 
-    connect(ui->SendDataEditLIne1,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged(QString)));
-    connect(ui->SendDataEditLIne2,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged( QString )));
-    connect(ui->SendDataEditLIne3,SIGNAL(textChanged(QString)),this,SLOT(SendDataEditLIne_textChanged( QString)));
+    connect(ui->SendDataEditLIne1,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign(QString)));
+    connect(ui->SendDataEditLIne2,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString )));
+    connect(ui->SendDataEditLIne3,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString)));
 
+    connect(ui->SendDataEditLIne1,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+    connect(ui->SendDataEditLIne2,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting( QString )));
+    connect(ui->SendDataEditLIne3,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting( QString)));
+
+
+
+    connect(ui->FrameFilterEdit1,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign(QString)));
+    connect(ui->FrameFilterEdit2,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString )));
+    connect(ui->FrameFilterEdit3,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString)));
+
+    connect(ui->FrameFilterEdit1,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+    connect(ui->FrameFilterEdit2,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting( QString)));
+    connect(ui->FrameFilterEdit3,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting( QString)));
+
+
+    connect(ui->SendDataButton1,SIGNAL(clicked(bool)),this,SLOT(on_SendDataButton_clicked()));
+    connect(ui->SendDataButton2,SIGNAL(clicked(bool)),this,SLOT(on_SendDataButton_clicked()));
+    connect(ui->SendDataButton3,SIGNAL(clicked(bool)),this,SLOT(on_SendDataButton_clicked()));
+
+
+    connect(ui->SendDataTimming1,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
+    connect(ui->SendDataTimming2,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
+    connect(ui->SendDataTimming3,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
@@ -74,6 +100,10 @@ void MainWindow::ParameterInit()
     ui->SendDataEditLIne2->setText(settings.value("SendDataEditLIne2").toString());
     ui->SendDataEditLIne3->setText(settings.value("SendDataEditLIne3").toString());
     ui->FrameDuration->setText(settings.value("FrameDuration").toString());
+
+    ui->FrameFilterEdit1->setText(settings.value("FrameFilterEdit1").toString());
+    ui->FrameFilterEdit2->setText(settings.value("FrameFilterEdit2").toString());
+    ui->FrameFilterEdit3->setText(settings.value("FrameFilterEdit3").toString());
 }
 void MainWindow::ParameterSave(QString Type, QString p)
 {
@@ -90,16 +120,29 @@ void MainWindow::readread()
     static QTime  start_time = QTime ::currentTime();
     QTime  current_time =QTime ::currentTime();
 
+
     if(start_time.msecsTo(current_time) > serial_config->receive_frame_duration)
     {
+
+        /*ui->ReceiveDataBrowser->moveCursor(QTextCursor::End);*/
+        /*QTextCursor tc = ui->ReceiveDataBrowser->textCursor();
+        ui->ReceiveDataBrowser->moveCursor(QTextCursor::Up, QTextCursor::KeepAnchor);
+        tc.select(QTextCursor::LineUnderCursor);
+        tc.removeSelectedText();
+        */
+
         start_time = current_time;
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        ui->ReceiveDataBrowser->setTextColor(Qt::red);
+
 
         if(true != serial_config->stop_display)
         {
+
+            //ui->ReceiveDataBrowser->moveCursor(QTextCursor::Up, QTextCursor::KeepAnchor);
+            ui->ReceiveDataBrowser->setTextColor(Qt::red);
             ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+            //ui->ReceiveDataBrowser->textCursor().insertText(strBuffer);
         }
     }
     start_time = current_time;
@@ -166,14 +209,26 @@ void MainWindow::on_FrameDuration_editingFinished()
     serial_config->receive_frame_duration =  ui->FrameDuration->text().toInt();
 }
 
-void MainWindow::on_SendDataButton1_clicked()
+
+void MainWindow::on_SendDataButton_clicked()
 {
     if(!port->isOpen())
     {
         return;
     }
+    QString str;
+    if(ui->SendDataButton1 == (QPushButton *)sender())
     {
-        QString str=ui->SendDataEditLIne1->text();
+         str=ui->SendDataEditLIne1->text();
+    }
+    if(ui->SendDataButton2 == (QPushButton *)sender())
+    {
+         str=ui->SendDataEditLIne2->text();
+    }
+    if(ui->SendDataButton3 == (QPushButton *)sender())
+    {
+         str=ui->SendDataEditLIne3->text();
+    }
         QStringList strlist=str.trimmed().split(" ");
         QByteArray arr;
         for(int i=0;i<strlist.count();++i)
@@ -200,19 +255,15 @@ void MainWindow::on_SendDataButton1_clicked()
             ui->ReceiveDataBrowser->setTextColor(Qt::blue);
             ui->ReceiveDataBrowser->insertPlainText(str);
         }
-    }
-
 }
 
 
-void MainWindow::on_SendDataButton2_clicked()
+void MainWindow::AutoSend(QString str)
 {
     if(!port->isOpen())
     {
         return;
     }
-    {
-        QString str=ui->SendDataEditLIne2->text();
         QStringList strlist=str.trimmed().split(" ");
         QByteArray arr;
         for(int i=0;i<strlist.count();++i)
@@ -227,46 +278,7 @@ void MainWindow::on_SendDataButton2_clicked()
             arr.append(byte);
         }
         port->write(arr);
-        QDateTime current_data = QDateTime::currentDateTime();
-        QTime  current_time =QTime ::currentTime();
-        QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
-                + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        if(!serial_config->stop_display)
-        {
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
-
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(str);
-        }
-    }
-
-}
-
-void MainWindow::on_SendDataButton3_clicked()
-{
-    if(!port->isOpen())
-    {
-        return;
-    }
-    {
-        QString str=ui->SendDataEditLIne3->text();
-        QStringList strlist=str.trimmed().split(" ");
-        QByteArray arr;
-        for(int i=0;i<strlist.count();++i)
-        {
-            bool bl=false;
-            QString ch=strlist.at(i);
-            uchar byte=(uchar)ch.toInt(&bl,16);
-            if(!bl)
-            {
-                return;
-            }
-            arr.append(byte);
-        }
-        port->write(arr);
-
-
+        ui->ReceiveDataBrowser->moveCursor(QTextCursor::End);
         QDateTime current_data = QDateTime::currentDateTime();
         QTime  current_time =QTime ::currentTime();
         QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
@@ -280,36 +292,18 @@ void MainWindow::on_SendDataButton3_clicked()
             ui->ReceiveDataBrowser->insertPlainText(str);
         }
 
-
-    }
 }
-
 void MainWindow::on_ReceiveDataBrowser_textChanged()
 {
     ui->ReceiveDataBrowser->moveCursor(QTextCursor::End);
-}
 
-void MainWindow::on_SendDataTimming1_stateChanged(int arg1)
-{
-    if(Qt::Checked == arg1)
-    {    
-        serial_config->current_timming_index = 1;
-        serial_config->send_data_timming1 = true;
-        int temp = ui->SendDurationEditLine1->text().toInt();
-        timer->start(temp);
-    }
-    else
-    {
-        serial_config->send_data_timming1 = false;
-    }
 }
-
 void MainWindow::TimerSend(void)
 {
     int temp = 1000;
     if(1 == serial_config->current_timming_index)
     {
-        on_SendDataButton1_clicked();
+        AutoSend(ui->SendDataEditLIne1->text());
         if(serial_config->send_data_timming2)
         {
             temp = ui->SendDurationEditLine2->text().toInt();
@@ -336,7 +330,7 @@ void MainWindow::TimerSend(void)
     }
     else if(2 == serial_config->current_timming_index)
     {
-        on_SendDataButton2_clicked();
+        AutoSend(ui->SendDataEditLIne2->text());
         if(serial_config->send_data_timming3)
         {
             temp = ui->SendDurationEditLine3->text().toInt();
@@ -362,7 +356,7 @@ void MainWindow::TimerSend(void)
     }
     else if(3 == serial_config->current_timming_index)
     {
-        on_SendDataButton3_clicked();
+        AutoSend(ui->SendDataEditLIne3->text());
         if(serial_config->send_data_timming1)
         {
             temp = ui->SendDurationEditLine1->text().toInt();
@@ -389,37 +383,51 @@ void MainWindow::TimerSend(void)
 
 }
 
-
-void MainWindow::on_SendDataTimming2_stateChanged(int arg1)
+void MainWindow::on_SendDataTimming_stateChanged(int arg1)
 {
-    if(Qt::Checked == arg1)
+    if( ui->SendDataTimming1 == sender())
     {
-        serial_config->current_timming_index = 2;
-        serial_config->send_data_timming2 = true;
-        int temp = ui->SendDurationEditLine2->text().toInt();
-        timer->start(temp);
+        if(Qt::Checked == arg1)
+        {
+            serial_config->current_timming_index = 1;
+            serial_config->send_data_timming1 = true;
+            int temp = ui->SendDurationEditLine1->text().toInt();
+            timer->start(temp);
+        }
+        else
+        {
+            serial_config->send_data_timming1 = false;
+        }
     }
-    else
+    if( ui->SendDataTimming2 == sender())
     {
-        serial_config->send_data_timming2 = false;
+        if(Qt::Checked == arg1)
+        {
+            serial_config->current_timming_index = 2;
+            serial_config->send_data_timming2 = true;
+            int temp = ui->SendDurationEditLine2->text().toInt();
+            timer->start(temp);
+        }
+        else
+        {
+            serial_config->send_data_timming2 = false;
+        }
+    }
+    if( ui->SendDataTimming3 == sender())
+    {
+        if(Qt::Checked == arg1)
+        {
+            serial_config->current_timming_index = 3;
+            serial_config->send_data_timming3 = true;
+            int temp = ui->SendDurationEditLine3->text().toInt();
+            timer->start(temp);
+        }
+        else
+        {
+            serial_config->send_data_timming3 = false;
+        }
     }
 }
-
-void MainWindow::on_SendDataTimming3_stateChanged(int arg1)
-{
-    if(Qt::Checked == arg1)
-    {
-        serial_config->current_timming_index = 3;
-        serial_config->send_data_timming3 = true;
-        int temp = ui->SendDurationEditLine3->text().toInt();
-        timer->start(temp);
-    }
-    else
-    {
-        serial_config->send_data_timming3 = false;
-    }
-}
-
 
 void MainWindow::openFileSlot()
 {
@@ -501,7 +509,41 @@ void MainWindow::saveTextToFile(){
 
 }
 
-void MainWindow::SendDataEditLIne_textChanged(const QString &arg1)
+
+void MainWindow::SaveUserSetting(const QString &arg1)
+{
+
+    if(ui->SendDataEditLIne1 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne1",arg1);
+    }
+    if(ui->SendDataEditLIne2 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne2",arg1);
+    }
+    if(ui->SendDataEditLIne3 == (QLineEdit*)sender())
+    {
+        ParameterSave("SendDataEditLIne3",arg1);
+    }
+
+    if(ui->FrameFilterEdit1 == (QLineEdit*)sender())
+    {
+        ParameterSave("FrameFilterEdit1",arg1);
+    }
+    if(ui->FrameFilterEdit2 == (QLineEdit*)sender())
+    {
+        ParameterSave("FrameFilterEdit2",arg1);
+    }
+    if(ui->FrameFilterEdit3 == (QLineEdit*)sender())
+    {
+        ParameterSave("FrameFilterEdit3",arg1);
+    }
+
+}
+
+
+
+void MainWindow::ForceHexAlign(const QString &arg1)
 {
     QString str_source=arg1;//ui->SendDataEditLIne1->text();
     QString str_des;
@@ -522,18 +564,7 @@ void MainWindow::SendDataEditLIne_textChanged(const QString &arg1)
     }
     //ui->SendDataEditLIne1->setText(str_des);
     ((QLineEdit*)sender())->setText(str_des);
-    if(ui->SendDataEditLIne1 == (QLineEdit*)sender())
-    {
-        ParameterSave("SendDataEditLIne1",str_des);
-    }
-    if(ui->SendDataEditLIne2 == (QLineEdit*)sender())
-    {
-        ParameterSave("SendDataEditLIne2",str_des);
-    }
-    if(ui->SendDataEditLIne3 == (QLineEdit*)sender())
-    {
-        ParameterSave("SendDataEditLIne3",str_des);
-    }
+
 }
 
 void MainWindow::on_FrameDuration_textChanged(const QString &arg1)

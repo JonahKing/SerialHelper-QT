@@ -32,7 +32,7 @@ private:
      void saveTextToFile();
      void ParameterInit(void);
      void ParameterSave(QString Type, QString p);
-
+     void AutoSend(QString str);
 
     inline QSerialPort::DataBits getbit(int bit)        //
     {
@@ -56,25 +56,27 @@ private slots:
 
     void on_FrameDuration_editingFinished();
 
-    void on_SendDataButton2_clicked();
+    void on_SendDataTimming_stateChanged(int);
+    //void on_SendDataButton2_clicked();
 
-    void on_SendDataButton1_clicked();
+    //void on_SendDataButton1_clicked();
 
-    void on_SendDataButton3_clicked();
+   // void on_SendDataButton3_clicked();
+    void on_SendDataButton_clicked();
 
     void on_ReceiveDataBrowser_textChanged();
 
-    void on_SendDataTimming1_stateChanged(int arg1);
+    //void on_SendDataTimming1_stateChanged(int arg1);
 
     void TimerSend(void);
-    void on_SendDataTimming2_stateChanged(int arg1);
+    //void on_SendDataTimming2_stateChanged(int arg1);
 
-    void on_SendDataTimming3_stateChanged(int arg1);
+    //void on_SendDataTimming3_stateChanged(int arg1);
 
     void openFileSlot();
     void saveFileSlot();
-    void SendDataEditLIne_textChanged(const QString &arg1);
-
+    void ForceHexAlign(const QString &arg1);
+    void SaveUserSetting(const QString &arg1);
 
     void on_FrameDuration_textChanged(const QString &arg1);
 };
