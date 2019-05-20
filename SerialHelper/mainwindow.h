@@ -23,6 +23,7 @@ private:
     Ui::MainWindow *ui;
     SerialConfig *serial_config;
     QTimer *timer;
+    QTimer *frame_duration_timer;
      QString fileName;
      QString fileContent;//读到的文件内容
 

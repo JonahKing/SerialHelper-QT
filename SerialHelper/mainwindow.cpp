@@ -21,7 +21,12 @@ MainWindow::MainWindow(QWidget *parent) :
     port=new QSerialPort;
     p_auto_reply_windows = new AutoReplyWindows(this);
 
+
+    frame_duration_timer = new QTimer(this);
+
+
     connect(port,SIGNAL(readyRead()),this,SLOT(readread()));
+    connect(frame_duration_timer,SIGNAL(timeout()),this,SLOT(readread()));
     connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
     connect(ui->Save,SIGNAL(triggered()),this,SLOT(saveFileSlot()));
     connect(ui->AutoReply,SIGNAL(triggered()),p_auto_reply_windows,SLOT(show()));
@@ -84,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
 
+
     ParameterInit();
 
 
@@ -120,42 +126,84 @@ void MainWindow::readread()
     static QTime  start_time = QTime ::currentTime();
     QTime  current_time =QTime ::currentTime();
 
+    static QString strBuffer = NULL;
 
-    if(start_time.msecsTo(current_time) > serial_config->receive_frame_duration)
+
+    QString contains_string1 = ui->FrameFilterEdit1->text();
+    QString contains_string2 = ui->FrameFilterEdit2->text();
+    QString contains_string3 = ui->FrameFilterEdit3->text();
+
+
+    if((QSerialPort*)(sender()) == port)
     {
-
-        /*ui->ReceiveDataBrowser->moveCursor(QTextCursor::End);*/
-        /*QTextCursor tc = ui->ReceiveDataBrowser->textCursor();
-        ui->ReceiveDataBrowser->moveCursor(QTextCursor::Up, QTextCursor::KeepAnchor);
-        tc.select(QTextCursor::LineUnderCursor);
-        tc.removeSelectedText();
-        */
-
-        start_time = current_time;
-        QString strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " \
-                + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-
-
-        if(true != serial_config->stop_display)
+        frame_duration_timer->stop();
+        frame_duration_timer->start(ui->FrameDuration->text().toInt());
+        if(NULL == strBuffer)
         {
-
-            //ui->ReceiveDataBrowser->moveCursor(QTextCursor::Up, QTextCursor::KeepAnchor);
-            ui->ReceiveDataBrowser->setTextColor(Qt::red);
-            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
-            //ui->ReceiveDataBrowser->textCursor().insertText(strBuffer);
+            strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " + current_time.toString("hh:mm:ss:zzz")+"  :  ";
+        }
+        for(int i=0;i<arr.length();i++)
+        {
+            strBuffer+= QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
         }
     }
-    start_time = current_time;
-    QString str;
-    for(int i=0;i<arr.length();i++)
+
+    if((QTimer*)(sender()) == frame_duration_timer)
     {
-        str+= QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
+        frame_duration_timer->stop();
+        if(true != serial_config->stop_display)
+        {
+            unsigned int printf = 0;
+            if(Qt::Checked == ui->FrameFilter1Enable->checkState())
+            {
+                if((-1 !=strBuffer.indexOf(contains_string1)))
+                {
+                         printf = 1;
+                }
+            }
+            else if(Qt::Checked == ui->FrameFilter2Enable->checkState())
+            {
+                if((-1 !=strBuffer.indexOf(contains_string2)))
+                {
+                   printf = 1;
+                }
+            }
+            else if(Qt::Checked == ui->FrameFilter3Enable->checkState())
+            {
+                 if((-1 !=strBuffer.indexOf(contains_string3)))
+                {
+                   printf = 1;
+                }
+            }
+            else
+            {
+                  printf = 1;
+            }
+
+             if(1 == printf)
+            {
+                ui->ReceiveDataBrowser->setTextColor(Qt::red);
+                ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+            }
+        }
+        strBuffer =  "";
     }
-    if(true != serial_config->stop_display)
-    {
-        ui->ReceiveDataBrowser->setTextColor(Qt::red);
-        ui->ReceiveDataBrowser->insertPlainText(str);
-    }
+
+
+   //
+   // {
+
+    //    {
+
+//
+     //       ui->ReceiveDataBrowser->setTextColor(Qt::red);
+
+    //        ui->ReceiveDataBrowser->insertPlainText(str);
+
+    //    }
+
+   // }
+    //start_time = current_time;
 
 }
 void MainWindow::on_SerialOnoffBUtton_clicked()
