@@ -86,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->SendDataTimming2,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
     connect(ui->SendDataTimming3,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
 
+    connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_auto_reply_windows,SLOT(ReceiveDataOk(QString)));
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
 
@@ -118,6 +120,11 @@ void MainWindow::ParameterSave(QString Type, QString p)
     settings.setValue(Type,p);
 }
 
+void BuffReceivefinished(QString arg)
+{
+    ;
+}
+
 
 void MainWindow::readread()
 {
@@ -128,6 +135,7 @@ void MainWindow::readread()
 
     static QString strBuffer = NULL;
 
+    static QString receive_buff = NULL;
 
     QString contains_string1 = ui->FrameFilterEdit1->text();
     QString contains_string2 = ui->FrameFilterEdit2->text();
@@ -138,16 +146,11 @@ void MainWindow::readread()
     {
         frame_duration_timer->stop();
         frame_duration_timer->start(ui->FrameDuration->text().toInt());
-        if(NULL == strBuffer)
-        {
-            strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-        }
         for(int i=0;i<arr.length();i++)
         {
-            strBuffer+= QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
+            receive_buff += QString("%1").arg((uchar)arr.at(i),2,16,QLatin1Char('0')).toUpper()+" ";
         }
     }
-
     if((QTimer*)(sender()) == frame_duration_timer)
     {
         frame_duration_timer->stop();
@@ -180,30 +183,20 @@ void MainWindow::readread()
                   printf = 1;
             }
 
-             if(1 == printf)
+            if(1 == printf)
             {
+
+                strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " + current_time.toString("hh:mm:ss:zzz")+"  :  ";
+                strBuffer+= receive_buff;
                 ui->ReceiveDataBrowser->setTextColor(Qt::red);
                 ui->ReceiveDataBrowser->insertPlainText(strBuffer);
-            }
+                emit BuffReceivefinished(receive_buff);
+            }    
+
         }
         strBuffer =  "";
+        receive_buff = "";
     }
-
-
-   //
-   // {
-
-    //    {
-
-//
-     //       ui->ReceiveDataBrowser->setTextColor(Qt::red);
-
-    //        ui->ReceiveDataBrowser->insertPlainText(str);
-
-    //    }
-
-   // }
-    //start_time = current_time;
 
 }
 void MainWindow::on_SerialOnoffBUtton_clicked()
