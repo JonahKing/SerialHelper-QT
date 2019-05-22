@@ -154,6 +154,8 @@ void MainWindow::readread()
     if((QTimer*)(sender()) == frame_duration_timer)
     {
         frame_duration_timer->stop();
+        strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " + current_time.toString("hh:mm:ss:zzz")+"  :  ";
+        strBuffer+= receive_buff;
         if(true != serial_config->stop_display)
         {
             unsigned int printf = 0;
@@ -185,9 +187,6 @@ void MainWindow::readread()
 
             if(1 == printf)
             {
-
-                strBuffer = "\n" + current_data.toString("yyyy-MM-dd")+"    " + current_time.toString("hh:mm:ss:zzz")+"  :  ";
-                strBuffer+= receive_buff;
                 ui->ReceiveDataBrowser->setTextColor(Qt::red);
                 ui->ReceiveDataBrowser->insertPlainText(strBuffer);
                 emit BuffReceivefinished(receive_buff);
@@ -211,7 +210,7 @@ void MainWindow::on_SerialOnoffBUtton_clicked()
     else
     {
 #ifdef Q_OS_WIN
-        port->setPortName(ui->comboBoxserial->currentText());
+        port->setPortName(ui->SerialNum->currentText());
 #else
         port->setPortName("/dev/"+ui->SerialNum->currentText());
 #endif
