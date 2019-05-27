@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     serial_config = new SerialConfig;
     port=new QSerialPort;
     p_auto_reply_windows = new AutoReplyWindows(this);
-
+    p_temperature_windows = new TemperatureWindows(this);
 
     frame_duration_timer = new QTimer(this);
 
@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->Open,SIGNAL(triggered()),this,SLOT(openFileSlot()));
     connect(ui->Save,SIGNAL(triggered()),this,SLOT(saveFileSlot()));
     connect(ui->AutoReply,SIGNAL(triggered()),p_auto_reply_windows,SLOT(show()));
+    connect(ui->TemparetureGraph,SIGNAL(triggered()),p_temperature_windows,SLOT(show()));
 
 
 
@@ -87,10 +88,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->SendDataTimming3,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
 
     connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_auto_reply_windows,SLOT(ReceiveDataOk(QString)));
-
+    connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_temperature_windows,SLOT(ReceiveTemperature(QString)));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
-
 
     ParameterInit();
 
@@ -112,6 +112,7 @@ void MainWindow::ParameterInit()
     ui->FrameFilterEdit1->setText(settings.value("FrameFilterEdit1").toString());
     ui->FrameFilterEdit2->setText(settings.value("FrameFilterEdit2").toString());
     ui->FrameFilterEdit3->setText(settings.value("FrameFilterEdit3").toString());
+
 }
 void MainWindow::ParameterSave(QString Type, QString p)
 {

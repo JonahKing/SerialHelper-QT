@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>580</height>
+    <height>615</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -366,7 +366,7 @@
           <string>               发送设置</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="8">
+          <item row="2" column="7">
            <widget class="QLineEdit" name="SendDataEditLIne1">
             <property name="minimumSize">
              <size>
@@ -378,9 +378,6 @@
              <enum>Qt::LogicalMoveStyle</enum>
             </property>
            </widget>
-          </item>
-          <item row="4" column="8">
-           <widget class="QLineEdit" name="SendDataEditLIne2"/>
           </item>
           <item row="4" column="2">
            <widget class="QLineEdit" name="SendDurationEditLine2">
@@ -400,6 +397,18 @@
             </property>
             <property name="text">
              <string>500</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="3">
+           <widget class="QLabel" name="SendDataDurationUnit3">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>ms</string>
             </property>
            </widget>
           </item>
@@ -427,31 +436,69 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="11">
-           <widget class="QPushButton" name="SendDataButton2">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="SendDataTimming3">
             <property name="text">
-             <string>发送</string>
+             <string>定时</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="11">
-           <widget class="QPushButton" name="SendDataButton1">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="SendDataTimming1">
             <property name="text">
-             <string>发送</string>
+             <string>定时</string>
             </property>
            </widget>
           </item>
           <item row="6" column="11">
+           <widget class="QPushButton" name="SendDataCleanButton3">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>清空</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLineEdit" name="SendDurationEditLine3">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>500</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="5">
+           <widget class="QCheckBox" name="SendDataFormat3">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Hex发送</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="7">
+           <widget class="QLineEdit" name="SendDataEditLIne3"/>
+          </item>
+          <item row="6" column="10">
            <widget class="QPushButton" name="SendDataButton3">
             <property name="font">
              <font>
@@ -463,27 +510,34 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="12">
-           <widget class="QPushButton" name="SendDataCleanButton2">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="SendDataTimming2">
             <property name="text">
-             <string>清空</string>
+             <string>定时</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="12">
-           <widget class="QPushButton" name="SendDataCleanButton1">
+          <item row="4" column="10">
+           <widget class="QPushButton" name="SendDataButton2">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>清空</string>
+             <string>发送</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="5">
+           <widget class="QCheckBox" name="SendDataFormat1">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Hex发送</string>
             </property>
            </widget>
           </item>
@@ -520,8 +574,18 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="12">
-           <widget class="QPushButton" name="SendDataCleanButton3">
+          <item row="4" column="7">
+           <widget class="QLineEdit" name="SendDataEditLIne2"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="SendDataDisplay">
+            <property name="text">
+             <string>显示发送</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="11">
+           <widget class="QPushButton" name="SendDataCleanButton1">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -532,91 +596,27 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="5">
-           <widget class="QCheckBox" name="SendDataFormat3">
+          <item row="2" column="10">
+           <widget class="QPushButton" name="SendDataButton1">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>Hex发送</string>
+             <string>发送</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="3">
-           <widget class="QLabel" name="SendDataDurationUnit3">
+          <item row="4" column="11">
+           <widget class="QPushButton" name="SendDataCleanButton2">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>ms</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QLineEdit" name="SendDurationEditLine3">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>500</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="SendDataTimming1">
-            <property name="text">
-             <string>定时</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="SendDataTimming2">
-            <property name="text">
-             <string>定时</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="SendDataTimming3">
-            <property name="text">
-             <string>定时</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="5">
-           <widget class="QCheckBox" name="SendDataFormat1">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Hex发送</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="8">
-           <widget class="QLineEdit" name="SendDataEditLIne3"/>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="SendDataDisplay">
-            <property name="text">
-             <string>显示发送</string>
+             <string>清空</string>
             </property>
            </widget>
           </item>
@@ -733,6 +733,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="Advanced"/>
     <addaction name="AutoReply"/>
+    <addaction name="TemparetureGraph"/>
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
@@ -805,6 +806,11 @@ p, li { white-space: pre-wrap; }
   <action name="AutoReply">
    <property name="text">
     <string>自动回复</string>
+   </property>
+  </action>
+  <action name="TemparetureGraph">
+   <property name="text">
+    <string>温度显示</string>
    </property>
   </action>
  </widget>

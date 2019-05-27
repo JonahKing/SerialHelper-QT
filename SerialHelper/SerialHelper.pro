@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport sql
+QT       += core gui serialport sql printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,15 +15,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     serialconfig.cpp \
-    autoreplywindows.cpp
+    autoreplywindows.cpp \
+    qcustomplot.cpp \
+    temperaturewindows.cpp
 
 HEADERS  += mainwindow.h \
     serialconfig.h \
-    autoreplywindows.h
+    autoreplywindows.h \
+    qcustomplot.h \
+    temperaturewindows.h
 
 FORMS    += \
     mainwindow.ui \
-    autoreplywindows.ui
+    autoreplywindows.ui \
+    temperaturewindows.ui
 
 CONFIG += mobility
 MOBILITY = 

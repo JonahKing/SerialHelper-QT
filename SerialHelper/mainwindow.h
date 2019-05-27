@@ -6,6 +6,7 @@
 #include <QSerialPortInfo>
 #include "serialconfig.h"
 #include "autoreplywindows.h"
+#include "temperaturewindows.h"
 namespace Ui {
 class MainWindow;
 }
@@ -30,6 +31,7 @@ private:
      QString fileContent;//读到的文件内容
 
      AutoReplyWindows *p_auto_reply_windows;
+     TemperatureWindows *p_temperature_windows;
 
      void readFile();
      void saveTextToFile();
