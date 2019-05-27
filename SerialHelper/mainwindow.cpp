@@ -325,13 +325,15 @@ void MainWindow::AutoSend(QString str)
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
         if(!serial_config->stop_display)
         {
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
+            if(Qt::Checked == ui->SendDataDisplay->checkState())
+            {
+                ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+                ui->ReceiveDataBrowser->insertPlainText(strBuffer);
 
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(str);
+                ui->ReceiveDataBrowser->setTextColor(Qt::blue);
+                ui->ReceiveDataBrowser->insertPlainText(str);
+            }
         }
-
 }
 void MainWindow::on_ReceiveDataBrowser_textChanged()
 {
