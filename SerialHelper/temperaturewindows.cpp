@@ -11,7 +11,7 @@ TemperatureWindows::TemperatureWindows(QWidget *parent) :
     this->setWindowTitle("温度曲线");
     //ui->widget->setBackground(QBrush(Qt::black));
     ui->widget->xAxis->setLabel("时间轴(sec)");
-    ui->widget->xAxis->setRange(0,300);
+    ui->widget->xAxis->setRange(0,50000);
     ui->widget->yAxis->setLabel("温度(°C)");
     ui->widget->yAxis->setRange(0,50);
 
