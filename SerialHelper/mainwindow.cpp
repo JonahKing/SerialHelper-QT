@@ -185,7 +185,7 @@ void MainWindow::readread()
 
             if(1 == printf)
             {
-                ui->ReceiveDataBrowser->setTextColor(Qt::red);
+                ui->ReceiveDataBrowser->setTextColor(Qt::black);
                 ui->ReceiveDataBrowser->insertPlainText(strBuffer);
                 emit BuffReceivefinished(receive_buff);
 
@@ -209,33 +209,35 @@ void MainWindow::readread()
                         ui->AllowJoinNetButton->setText("关闭入网状态");
                 }
 
-
-                if((-1 != receive_buff.indexOf("01 0E"))&&(-1 != receive_buff.indexOf("23 8B FF FF FF FF A8")))
+                if(this->serial_config->allow_joint_net == true)
                 {
-                      if(1 == ui->HostVersionReply->currentIndex())//原样回复
-                      {
-                              AutoSend(send_string);
-                      }
-                      if(2 == ui->HostVersionReply->currentIndex())
-                      {
-                           send_string.replace("23 8B FF FF FF FF A8","23 8B 03 02 04 00 AD");
-                           AutoSend(send_string);
-                      }
-                 }
-                else if(-1 != receive_buff.indexOf("23 80"))
-                {
-                      if(1 == ui->DevicesTypeReply->currentIndex())//原样回复
-                      {
-                              AutoSend(send_string);
-                      }
-                 }
-                else if(-1 != receive_buff.indexOf("23 85"))
-                {
-                      if(1 == ui->DevicesVersionReply->currentIndex())//原样回复
-                      {
-                              AutoSend(send_string);
-                      }
-                 }
+                    if((-1 != receive_buff.indexOf("01 0E"))&&(-1 != receive_buff.indexOf("23 8B FF FF FF FF A8")))
+                    {
+                          if(1 == ui->HostVersionReply->currentIndex())//原样回复
+                          {
+                                  AutoSend(send_string);
+                          }
+                          if(2 == ui->HostVersionReply->currentIndex())
+                          {
+                               send_string.replace("23 8B FF FF FF FF A8","23 8B 03 02 04 00 AD");
+                               AutoSend(send_string);
+                          }
+                     }
+                    else if(-1 != receive_buff.indexOf("23 80"))
+                    {
+                          if(1 == ui->DevicesTypeReply->currentIndex())//原样回复
+                          {
+                                  AutoSend(send_string);
+                          }
+                     }
+                    else if(-1 != receive_buff.indexOf("23 85"))
+                    {
+                          if(1 == ui->DevicesVersionReply->currentIndex())//原样回复
+                          {
+                                  AutoSend(send_string);
+                          }
+                     }
+                }
             }    
 
         }
@@ -335,11 +337,8 @@ void MainWindow::on_SendDataButton_clicked()
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
         if(!serial_config->stop_display)
         {
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(strBuffer);
-
-            ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-            ui->ReceiveDataBrowser->insertPlainText(str);
+            ui->ReceiveDataBrowser->setTextColor(Qt::red);
+            ui->ReceiveDataBrowser->insertPlainText(strBuffer+str);
         }
 }
 
@@ -373,11 +372,8 @@ void MainWindow::AutoSend(QString str)
         {
             if(Qt::Checked != ui->SendDataDisplay->checkState())
             {
-                ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-                ui->ReceiveDataBrowser->insertPlainText(strBuffer);
-
-                ui->ReceiveDataBrowser->setTextColor(Qt::blue);
-                ui->ReceiveDataBrowser->insertPlainText(str);
+                ui->ReceiveDataBrowser->setTextColor(Qt::red);
+                ui->ReceiveDataBrowser->insertPlainText(strBuffer+str);
             }
         }
 }
