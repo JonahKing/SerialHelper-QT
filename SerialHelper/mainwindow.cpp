@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->SendDataEditLIne1->setValidator(validator);
     ui->SendDataEditLIne2->setValidator(validator);
     ui->SendDataEditLIne3->setValidator(validator);
+    ui->ZigbeeMAC->setValidator(validator);
 
     ui->FrameFilterEdit1->setValidator(validator);
     ui->FrameFilterEdit2->setValidator(validator);
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->FrameFilterEdit1,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign(QString)));
     connect(ui->FrameFilterEdit2,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString )));
     connect(ui->FrameFilterEdit3,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString)));
+    connect(ui->ZigbeeMAC,SIGNAL(textChanged(QString)),this,SLOT(ForceHexAlign( QString)));
 
     connect(ui->FrameFilterEdit1,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
     connect(ui->FrameFilterEdit2,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting( QString)));
@@ -284,11 +286,17 @@ void MainWindow::on_REceiveStopButton_clicked()
     serial_config->stop_display = !serial_config->stop_display;
     if(true == serial_config->stop_display)
     {
-         ui->REceiveStopButton->setText("继续显示");
+         ui->REceiveStopButton->setText("停止显示");
+         QPalette pal = ui->REceiveStopButton->palette();
+         ui->REceiveStopButton->setPalette(pal);
+         ui->REceiveStopButton->setStyleSheet("background-color:red");
     }
     else
     {
-        ui->REceiveStopButton->setText("暂停显示");
+        ui->REceiveStopButton->setText("正常显示");
+        QPalette pal = ui->REceiveStopButton->palette();
+        ui->REceiveStopButton->setPalette(pal);
+        ui->REceiveStopButton->setStyleSheet("background-color:green");
     }
 }
 
@@ -667,4 +675,10 @@ void MainWindow::on_AllowJoinNetButton_clicked()
              AutoSend("22 09 00 00 00 00 00 25 00");
         }
 
+}
+
+void MainWindow::on_ResetZigbeebutton_clicked()
+{
+    QString send_str = "01 0C "+ ui->ZigbeeMAC->text()+"AA 06 89 00 01 8E";
+    AutoSend(send_str);
 }

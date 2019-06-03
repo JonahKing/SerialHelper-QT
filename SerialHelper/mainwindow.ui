@@ -606,7 +606,13 @@ p, li { white-space: pre-wrap; }
                </font>
               </property>
               <property name="text">
-               <string>暂停</string>
+               <string>正常显示</string>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -867,7 +873,36 @@ p, li { white-space: pre-wrap; }
             <item row="0" column="0">
              <widget class="QPushButton" name="AllowJoinNetButton">
               <property name="text">
-               <string>不允许入网</string>
+               <string>入网状态未知</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="gridLayoutWidget_3">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>80</y>
+             <width>241</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="2" column="1" rowspan="2">
+             <widget class="QLineEdit" name="ZigbeeMAC"/>
+            </item>
+            <item row="2" column="0" rowspan="2">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>zigbe地址</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" rowspan="2" colspan="3">
+             <widget class="QPushButton" name="ResetZigbeebutton">
+              <property name="text">
+               <string>恢复出厂</string>
               </property>
              </widget>
             </item>

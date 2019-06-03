@@ -74,6 +74,7 @@ private slots:
     void SaveUserSetting(const QString &arg1);
     void on_FrameDuration_textChanged(const QString &arg1);
     void on_AllowJoinNetButton_clicked();
+    void on_ResetZigbeebutton_clicked();
 };
 
 #endif // MAINWINDOW_H
