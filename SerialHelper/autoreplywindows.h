@@ -24,6 +24,7 @@ private slots:
     void ForceHexAlign(int,int);
     void SaveUserSetting(int,int);
     void SaveUserSetting(int);
+    void send_button_fun(bool);
 };
 
 #endif // AUTOREPLYWINDOWS_H

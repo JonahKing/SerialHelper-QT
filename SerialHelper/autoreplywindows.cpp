@@ -20,16 +20,17 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     for(int i = 0;i<ui->MunualSendTabWidget->rowCount ();i++)
     {
         QPushButton *button=new QPushButton;
+        button->setProperty("ID",i);
         button->setText("发送");
         ui->MunualSendTabWidget->setCellWidget(i,3,button); //插入复选
-
+        connect(button,SIGNAL(clicked(bool)),this,SLOT(send_button_fun(bool)));
     }
 
     ParameterInit();
 
     connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(ForceHexAlign(int,int)));
     connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
-    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
+    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(ForceHexAlign(int,int)));
     connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
 
 
@@ -138,13 +139,20 @@ void AutoReplyWindows::ReceiveDataOk(QString arg)
 
         }
     }
-
 }
 
 void AutoReplyWindows::ForceHexAlign(int row,int column)
 {
-    QString str_source=ui->tableWidget->item(row,column)->text();//ui->SendDataEditLIne1->text();
+    QString str_source = NULL;
     QString str_des;
+    if(sender() == ui->tableWidget)
+    {
+       str_source =ui->tableWidget->item(row,column)->text();//ui->SendDataEditLIne1->text();
+    }
+    if(sender() == ui->MunualSendTabWidget)
+    {
+        str_source =ui->MunualSendTabWidget->item(row,column)->text();//ui->SendDataEditLIne1->text();
+    }
     int count = 0;
     str_source = str_source.remove(QRegExp("\\s"));
 
@@ -160,10 +168,26 @@ void AutoReplyWindows::ForceHexAlign(int row,int column)
                str_des += " ";
         }
     }
-    ui->tableWidget->item(row,column)->setText(str_des);
+    if(sender() == ui->tableWidget)
+    {
+       ui->tableWidget->item(row,column)->setText(str_des);
+    }
+    if(sender() == ui->MunualSendTabWidget)
+    {
+        ui->MunualSendTabWidget->item(row,column)->setText(str_des);
+    }
+
 }
 
-
+void AutoReplyWindows::send_button_fun(bool)
+{
+    QPushButton *button = (QPushButton*)sender();
+    int row = button->property("id").toInt();
+    QString send_str = ui->MunualSendTabWidget->item(row,0)->text()+" "\
+            +ui->MunualSendTabWidget->item(row,1)->text()+" "\
+            +ui->MunualSendTabWidget->item(row,2)->text();
+    emit AutoReplyToWindows(send_str);
+}
 void AutoReplyToWindows(QString)
 {
     ;
