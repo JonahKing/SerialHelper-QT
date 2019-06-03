@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     port=new QSerialPort;
     p_auto_reply_windows = new AutoReplyWindows(this);
     p_temperature_windows = new TemperatureWindows(this);
-
     frame_duration_timer = new QTimer(this);
 
 
@@ -31,8 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->Save,SIGNAL(triggered()),this,SLOT(saveFileSlot()));
     connect(ui->AutoReply,SIGNAL(triggered()),p_auto_reply_windows,SLOT(show()));
     connect(ui->TemparetureGraph,SIGNAL(triggered()),p_temperature_windows,SLOT(show()));
-
-
 
 
 
@@ -191,6 +188,54 @@ void MainWindow::readread()
                 ui->ReceiveDataBrowser->setTextColor(Qt::red);
                 ui->ReceiveDataBrowser->insertPlainText(strBuffer);
                 emit BuffReceivefinished(receive_buff);
+
+                QString send_string = receive_buff;
+
+                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 01"))
+                {
+                    this->serial_config->allow_joint_net = true;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:green");
+                        ui->AllowJoinNetButton->setText("允许入网状态");
+                }
+
+                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 00"))
+                {
+                    this->serial_config->allow_joint_net = false;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:red");
+                        ui->AllowJoinNetButton->setText("关闭入网状态");
+                }
+
+
+                if((-1 != receive_buff.indexOf("01 0E"))&&(-1 != receive_buff.indexOf("23 8B FF FF FF FF A8")))
+                {
+                      if(1 == ui->HostVersionReply->currentIndex())//原样回复
+                      {
+                              AutoSend(send_string);
+                      }
+                      if(2 == ui->HostVersionReply->currentIndex())
+                      {
+                           send_string.replace("23 8B FF FF FF FF A8","23 8B 03 02 04 00 AD");
+                           AutoSend(send_string);
+                      }
+                 }
+                else if(-1 != receive_buff.indexOf("23 80"))
+                {
+                      if(1 == ui->DevicesTypeReply->currentIndex())//原样回复
+                      {
+                              AutoSend(send_string);
+                      }
+                 }
+                else if(-1 != receive_buff.indexOf("23 85"))
+                {
+                      if(1 == ui->DevicesVersionReply->currentIndex())//原样回复
+                      {
+                              AutoSend(send_string);
+                      }
+                 }
             }    
 
         }
@@ -326,7 +371,7 @@ void MainWindow::AutoSend(QString str)
                 + current_time.toString("hh:mm:ss:zzz")+"  :  ";
         if(!serial_config->stop_display)
         {
-            if(Qt::Checked == ui->SendDataDisplay->checkState())
+            if(Qt::Checked != ui->SendDataDisplay->checkState())
             {
                 ui->ReceiveDataBrowser->setTextColor(Qt::blue);
                 ui->ReceiveDataBrowser->insertPlainText(strBuffer);
@@ -613,4 +658,17 @@ void MainWindow::ForceHexAlign(const QString &arg1)
 void MainWindow::on_FrameDuration_textChanged(const QString &arg1)
 {
     ParameterSave("FrameDuration",arg1);
+}
+
+void MainWindow::on_AllowJoinNetButton_clicked()
+{
+        if(false == this->serial_config->allow_joint_net)
+        {
+            AutoSend("22 09 00 00 00 00 00 25 01");
+        }
+        else
+        {
+             AutoSend("22 09 00 00 00 00 00 25 00");
+        }
+
 }

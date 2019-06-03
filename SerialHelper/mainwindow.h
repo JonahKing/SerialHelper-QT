@@ -27,8 +27,8 @@ private:
     SerialConfig *serial_config;
     QTimer *timer;
     QTimer *frame_duration_timer;
-     QString fileName;
-     QString fileContent;//读到的文件内容
+    QString fileName;
+    QString fileContent;//读到的文件内容
 
      AutoReplyWindows *p_auto_reply_windows;
      TemperatureWindows *p_temperature_windows;
@@ -73,6 +73,7 @@ private slots:
     void ForceHexAlign(const QString &arg1);
     void SaveUserSetting(const QString &arg1);
     void on_FrameDuration_textChanged(const QString &arg1);
+    void on_AllowJoinNetButton_clicked();
 };
 
 #endif // MAINWINDOW_H

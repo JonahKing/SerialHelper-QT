@@ -8,4 +8,5 @@ SerialConfig::SerialConfig()
     send_data_timming1 = false;
     send_data_timming2 = false;
     send_data_timming3 = false;
+    allow_joint_net = false;
 }
