@@ -17,10 +17,22 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
 
     }
 
+    for(int i = 0;i<ui->MunualSendTabWidget->rowCount ();i++)
+    {
+        QPushButton *button=new QPushButton;
+        button->setText("发送");
+        ui->MunualSendTabWidget->setCellWidget(i,3,button); //插入复选
+
+    }
+
     ParameterInit();
 
     connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(ForceHexAlign(int,int)));
     connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
+    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
+    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
+
+
     connect(this,SIGNAL(AutoReplyToWindows(QString)),parent,SLOT(AutoSend(QString)));
     for(int i = 0;i<ui->tableWidget->rowCount ();i++)
     {
@@ -53,18 +65,36 @@ void AutoReplyWindows::ParameterInit(void)
         }
 
     }
-    //
+    for(int i = 0; i< ui->MunualSendTabWidget->rowCount();i++)
+    {
+
+        for(int j = 0;j<ui->MunualSendTabWidget->columnCount();j++)
+        {
+            ui->MunualSendTabWidget->setItem(i,j,new QTableWidgetItem(settings.value(QString::number(10000+i*100+j)).toString()));
+        }
+
+    }
 }
 
 void AutoReplyWindows::SaveUserSetting(int row ,int column)
 {
          QString Type, p;
+         if(sender() == ui->tableWidget)
+         {
+             Type  = QString::number(row*100+column);
+             p = ui->tableWidget->item(row,column)->text();
 
-         Type  = QString::number(row*100+column);
-         p = ui->tableWidget->item(row,column)->text();
+             QSettings settings("ICConfig.ini", QSettings::IniFormat);
+             settings.setValue(Type,p);
+         }
+         if(sender() == ui->MunualSendTabWidget)
+         {
+             Type  = QString::number(10000+row*100+column);
+             p = ui->MunualSendTabWidget->item(row,column)->text();
 
-         QSettings settings("ICConfig.ini", QSettings::IniFormat);
-         settings.setValue(Type,p);
+             QSettings settings("ICConfig.ini", QSettings::IniFormat);
+             settings.setValue(Type,p);
+         }
 
 }
 void AutoReplyWindows::SaveUserSetting(int arg)
@@ -85,6 +115,7 @@ void AutoReplyWindows::SaveUserSetting(int arg)
         settings.setValue(Type,p);
     }
 }
+
 void AutoReplyWindows::ReceiveDataOk(QString arg)
 {
 

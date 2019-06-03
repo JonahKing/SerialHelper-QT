@@ -676,7 +676,6 @@ void MainWindow::on_AllowJoinNetButton_clicked()
         }
 
 }
-
 void MainWindow::on_ResetZigbeebutton_clicked()
 {
     QString send_str = "01 0C "+ ui->ZigbeeMAC->text()+"AA 06 89 00 01 8E";
