@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
+#include <QLineEdit>
 namespace Ui {
 class AutoReplyWindows;
 }
@@ -21,10 +22,10 @@ private:
     Ui::AutoReplyWindows *ui;
 private slots:
     void ReceiveDataOk(QString arg);
-    void ForceHexAlign(int,int);
-    void SaveUserSetting(int,int);
     void SaveUserSetting(int);
+    void SaveUserSetting(QString arg);
     void send_button_fun(bool);
+
 };
 
 #endif // AUTOREPLYWINDOWS_H

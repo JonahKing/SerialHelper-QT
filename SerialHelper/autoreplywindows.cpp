@@ -7,17 +7,45 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+    QLineEdit *LineEdit=new QLineEdit();
+    QRegExp rx("[a-fA-F0-9 ]{160}");
+    QRegExpValidator *validator = new QRegExpValidator(rx, this);
+
+
     setWindowTitle("自动回复设置");
     for(int i = 0;i<ui->tableWidget->rowCount ();i++)
     {
         QCheckBox *check_box=new QCheckBox;
-
         check_box->setCheckState (Qt::Unchecked);
         ui->tableWidget->setCellWidget(i,0,check_box); //插入复选
+        connect(check_box,SIGNAL(stateChanged(int)),this,SLOT(SaveUserSetting(int)));
+
+    }
+
+    for(int i = 0;i<ui->tableWidget->rowCount ();i++)
+    {
+        for(int j = 1;j<ui->tableWidget->columnCount()-1;j++)
+        {
+            LineEdit->setValidator(validator);
+            ui->tableWidget->setCellWidget(i,j,LineEdit);
+            connect(LineEdit,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+        }
 
     }
 
     for(int i = 0;i<ui->MunualSendTabWidget->rowCount ();i++)
+    {
+         for(int j = 0;j<ui->MunualSendTabWidget->columnCount()-2;j++)
+         {
+             QLineEdit *LineEdit=new QLineEdit();
+             LineEdit->setValidator(validator);
+             ui->MunualSendTabWidget->setCellWidget(i,j,LineEdit);
+             connect(LineEdit,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+         }
+    }
+
+    for(int i = 0;i<ui->MunualSendTabWidget->rowCount();i++)
     {
         QPushButton *button=new QPushButton;
         button->setProperty("ID",i);
@@ -26,19 +54,10 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
         connect(button,SIGNAL(clicked(bool)),this,SLOT(send_button_fun(bool)));
     }
 
-    ParameterInit();
-
-    connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(ForceHexAlign(int,int)));
-    connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
-    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(ForceHexAlign(int,int)));
-    connect(ui->MunualSendTabWidget,SIGNAL(cellChanged(int,int)),this,SLOT(SaveUserSetting(int,int)));
-
+    //ParameterInit();
 
     connect(this,SIGNAL(AutoReplyToWindows(QString)),parent,SLOT(AutoSend(QString)));
-    for(int i = 0;i<ui->tableWidget->rowCount ();i++)
-    {
-        connect((QCheckBox*)ui->tableWidget->cellWidget(i,0),SIGNAL(stateChanged(int)),this,SLOT(SaveUserSetting(int)));
-    }
+
 }
 
 AutoReplyWindows::~AutoReplyWindows()
@@ -59,62 +78,76 @@ void AutoReplyWindows::ParameterInit(void)
              ((QCheckBox*)ui->tableWidget->cellWidget(i,0))->setCheckState(Qt::Checked);
         }
 
-        for(int j = 1;j<ui->tableWidget->columnCount();j++)
+        for(int j = 1;j<ui->tableWidget->columnCount()-1;j++)
         {
-            //ui->tableWidget->item(i,j)->setText(settings.value(QString::number(i*100+j)).toString());
-            ui->tableWidget->setItem(i,j,new QTableWidgetItem(settings.value(QString::number(i*100+j)).toString()));
+            ((QLineEdit*)ui->tableWidget->item(i,j))->setText(settings.value(QString::number(i*100+j)).toString());
         }
 
     }
     for(int i = 0; i< ui->MunualSendTabWidget->rowCount();i++)
     {
-
-        for(int j = 0;j<ui->MunualSendTabWidget->columnCount();j++)
+        for(int j = 0;j<ui->MunualSendTabWidget->columnCount()-2;j++)
         {
-            ui->MunualSendTabWidget->setItem(i,j,new QTableWidgetItem(settings.value(QString::number(10000+i*100+j)).toString()));
+           ((QLineEdit*)ui->tableWidget->item(i,j))->setText(settings.value(QString::number(10000+i*100+j)).toString());
         }
 
     }
 }
-
-void AutoReplyWindows::SaveUserSetting(int row ,int column)
+void AutoReplyWindows::SaveUserSetting(QString arg)
 {
-         QString Type, p;
-         if(sender() == ui->tableWidget)
-         {
-             Type  = QString::number(row*100+column);
-             p = ui->tableWidget->item(row,column)->text();
+    QTableWidgetItem *widget_item = (QTableWidgetItem *)sender();
 
-             QSettings settings("ICConfig.ini", QSettings::IniFormat);
-             settings.setValue(Type,p);
-         }
-         if(sender() == ui->MunualSendTabWidget)
-         {
-             Type  = QString::number(10000+row*100+column);
-             p = ui->MunualSendTabWidget->item(row,column)->text();
+    QString str_des = NULL;
 
-             QSettings settings("ICConfig.ini", QSettings::IniFormat);
-             settings.setValue(Type,p);
-         }
+    int count = 0;
+    arg = arg.remove(QRegExp("\\s"));
 
+    for(int i = 0; i <arg.length();i++ )
+    {
+        str_des += arg.at(i).toUpper();
+        count++;
+        if(0 == (i+1)%2)
+        {
+               str_des += " ";
+        }
+    }
+    ((QLineEdit*)widget_item)->setText(str_des);
+
+    int row = widget_item->row();
+    int column = widget_item->column();
+    QString Type, p;
+    if(ui->tableWidget == widget_item->tableWidget())
+    {
+        Type  = QString::number(row*100+column);
+
+    }
+    if(ui->MunualSendTabWidget == widget_item->tableWidget())
+    {
+        Type  = QString::number(10000+row*100+column);
+
+    }
+    p = arg;
+    QSettings settings("ICConfig.ini", QSettings::IniFormat);
+    settings.setValue(Type,p);
 }
 void AutoReplyWindows::SaveUserSetting(int arg)
 {
+
+    QTableWidgetItem *widget_item = (QTableWidgetItem *)sender();
+    int row = widget_item->row();
+    int column = widget_item->column();
     QString Type, p;
-    for(int row= 0;row < ui->tableWidget->rowCount();row++)
-    {
-        Type  = QString::number(row*100+0);
-        if(Qt::Checked == ((QCheckBox*)ui->tableWidget->cellWidget(row,0))->checkState())
-         {
-             p = "Qt::Checked";
-         }
-         else
-         {
-             p = "Qt::Unchecked";
-         }
-        QSettings settings("ICConfig.ini", QSettings::IniFormat);
-        settings.setValue(Type,p);
-    }
+    Type  = QString::number(row*100+column);
+    if(Qt::Checked == arg)
+     {
+         p = "Qt::Checked";
+     }
+     else
+     {
+         p = "Qt::Unchecked";
+     }
+     QSettings settings("ICConfig.ini", QSettings::IniFormat);
+     settings.setValue(Type,p);
 }
 
 void AutoReplyWindows::ReceiveDataOk(QString arg)
@@ -141,51 +174,13 @@ void AutoReplyWindows::ReceiveDataOk(QString arg)
     }
 }
 
-void AutoReplyWindows::ForceHexAlign(int row,int column)
-{
-    QString str_source = NULL;
-    QString str_des;
-    if(sender() == ui->tableWidget)
-    {
-       str_source =ui->tableWidget->item(row,column)->text();//ui->SendDataEditLIne1->text();
-    }
-    if(sender() == ui->MunualSendTabWidget)
-    {
-        str_source =ui->MunualSendTabWidget->item(row,column)->text();//ui->SendDataEditLIne1->text();
-    }
-    int count = 0;
-    str_source = str_source.remove(QRegExp("\\s"));
-
-    for(int i = 0; i <str_source.length();i++ )
-    {
-        str_des += str_source.at(i).toUpper();
-        //if(operator!=(QChar::Space,str_source.at(i)))
-        {
-            count++;
-        }
-        if(0 == (i+1)%2)
-        {
-               str_des += " ";
-        }
-    }
-    if(sender() == ui->tableWidget)
-    {
-       ui->tableWidget->item(row,column)->setText(str_des);
-    }
-    if(sender() == ui->MunualSendTabWidget)
-    {
-        ui->MunualSendTabWidget->item(row,column)->setText(str_des);
-    }
-
-}
-
 void AutoReplyWindows::send_button_fun(bool)
 {
     QPushButton *button = (QPushButton*)sender();
     int row = button->property("ID").toInt();
-    QString send_str = ui->MunualSendTabWidget->item(row,0)->text()
-            +ui->MunualSendTabWidget->item(row,1)->text()
-            +ui->MunualSendTabWidget->item(row,2)->text();
+    QString send_str = ((QLineEdit*)ui->MunualSendTabWidget->cellWidget(row,0))->text()
+            +((QLineEdit*)ui->MunualSendTabWidget->cellWidget(row,1))->text()
+            +((QLineEdit*)ui->MunualSendTabWidget->cellWidget(row,2))->text();
     emit AutoReplyToWindows(send_str);
 }
 void AutoReplyToWindows(QString)
