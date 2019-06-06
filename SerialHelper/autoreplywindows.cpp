@@ -182,9 +182,9 @@ void AutoReplyWindows::ForceHexAlign(int row,int column)
 void AutoReplyWindows::send_button_fun(bool)
 {
     QPushButton *button = (QPushButton*)sender();
-    int row = button->property("id").toInt();
-    QString send_str = ui->MunualSendTabWidget->item(row,0)->text()+" "\
-            +ui->MunualSendTabWidget->item(row,1)->text()+" "\
+    int row = button->property("ID").toInt();
+    QString send_str = ui->MunualSendTabWidget->item(row,0)->text()
+            +ui->MunualSendTabWidget->item(row,1)->text()
             +ui->MunualSendTabWidget->item(row,2)->text();
     emit AutoReplyToWindows(send_str);
 }
