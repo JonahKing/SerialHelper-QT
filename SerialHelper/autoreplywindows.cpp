@@ -27,6 +27,12 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     {
         for(int j = 1;j<ui->tableWidget->columnCount()-1;j++)
         {
+            QLineEdit *LineEdit=new QLineEdit();
+            //QTableWidgetItem* table_widget = new QTableWidgetItem();
+            LineEdit->setValidator(validator);
+            LineEdit->setProperty("row",i);
+            LineEdit->setProperty("column",j);
+
             LineEdit->setValidator(validator);
             ui->tableWidget->setCellWidget(i,j,LineEdit);
             connect(LineEdit,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
@@ -34,14 +40,26 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
 
     }
 
+
     for(int i = 0;i<ui->MunualSendTabWidget->rowCount ();i++)
     {
-         for(int j = 0;j<ui->MunualSendTabWidget->columnCount()-2;j++)
+         for(int j = 0;j<ui->MunualSendTabWidget->columnCount();j++)
          {
-             QLineEdit *LineEdit=new QLineEdit();
-             LineEdit->setValidator(validator);
-             ui->MunualSendTabWidget->setCellWidget(i,j,LineEdit);
-             connect(LineEdit,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+             if(j != 3)
+             {
+                 QLineEdit *LineEdit=new QLineEdit();
+                 //QTableWidgetItem* table_widget = new QTableWidgetItem();
+                 if(j != 4)
+                 {
+                     LineEdit->setValidator(validator);
+
+                 }
+                 LineEdit->setProperty("row",100+i);
+                 LineEdit->setProperty("column",j);
+                 ui->MunualSendTabWidget->setCellWidget(i,j,LineEdit);
+                 connect(LineEdit,SIGNAL(textChanged(QString)),this,SLOT(SaveUserSetting(QString)));
+             }
+
          }
     }
 
@@ -50,11 +68,15 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
         QPushButton *button=new QPushButton;
         button->setProperty("ID",i);
         button->setText("发送");
-        ui->MunualSendTabWidget->setCellWidget(i,3,button); //插入复选
+        button->setProperty("row",100+i);
+        button->setProperty("column",3);
+        ui->MunualSendTabWidget->setCellWidget(i,3,button);
         connect(button,SIGNAL(clicked(bool)),this,SLOT(send_button_fun(bool)));
     }
 
-    //ParameterInit();
+
+     ParameterInit();
+
 
     connect(this,SIGNAL(AutoReplyToWindows(QString)),parent,SLOT(AutoSend(QString)));
 
@@ -80,53 +102,51 @@ void AutoReplyWindows::ParameterInit(void)
 
         for(int j = 1;j<ui->tableWidget->columnCount()-1;j++)
         {
-            ((QLineEdit*)ui->tableWidget->item(i,j))->setText(settings.value(QString::number(i*100+j)).toString());
+            ((QLineEdit*)ui->tableWidget->cellWidget(i,j))->setText(settings.value(QString::number(i*100+j)).toString());
         }
 
     }
     for(int i = 0; i< ui->MunualSendTabWidget->rowCount();i++)
     {
-        for(int j = 0;j<ui->MunualSendTabWidget->columnCount()-2;j++)
+        for(int j = 0;j<ui->MunualSendTabWidget->columnCount();j++)
         {
-           ((QLineEdit*)ui->tableWidget->item(i,j))->setText(settings.value(QString::number(10000+i*100+j)).toString());
-        }
-
+            if(j != (ui->MunualSendTabWidget->columnCount()-2))
+            {
+                ((QLineEdit*)ui->MunualSendTabWidget->cellWidget(i,j))->setText(settings.value(QString::number(10000+i*100+j)).toString());
+             }
+           }
     }
 }
 void AutoReplyWindows::SaveUserSetting(QString arg)
 {
-    QTableWidgetItem *widget_item = (QTableWidgetItem *)sender();
+    QLineEdit *widget_item = (QLineEdit*)sender();
+
+    int row = widget_item->property("row").toInt();
+    int column = widget_item->property("column").toInt();
+
 
     QString str_des = NULL;
-
-    int count = 0;
-    arg = arg.remove(QRegExp("\\s"));
-
-    for(int i = 0; i <arg.length();i++ )
+    if((row < 100)||(column != 4))
     {
-        str_des += arg.at(i).toUpper();
-        count++;
-        if(0 == (i+1)%2)
+        int count = 0;
+        arg = arg.remove(QRegExp("\\s"));
+
+        for(int i = 0; i <arg.length();i++ )
         {
-               str_des += " ";
+            str_des += arg.at(i).toUpper();
+            count++;
+            if(0 == (i+1)%2)
+            {
+                   str_des += " ";
+            }
         }
-    }
-    ((QLineEdit*)widget_item)->setText(str_des);
-
-    int row = widget_item->row();
-    int column = widget_item->column();
-    QString Type, p;
-    if(ui->tableWidget == widget_item->tableWidget())
-    {
-        Type  = QString::number(row*100+column);
+        widget_item->setText(str_des);
 
     }
-    if(ui->MunualSendTabWidget == widget_item->tableWidget())
-    {
-        Type  = QString::number(10000+row*100+column);
 
-    }
-    p = arg;
+    QString Type  = QString::number(row*100+column);
+    QString p = arg;
+
     QSettings settings("ICConfig.ini", QSettings::IniFormat);
     settings.setValue(Type,p);
 }
