@@ -17,6 +17,8 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     for(int i = 0;i<ui->tableWidget->rowCount ();i++)
     {
         QCheckBox *check_box=new QCheckBox;
+        LineEdit->setProperty("row",i);
+        LineEdit->setProperty("column",0);
         check_box->setCheckState (Qt::Unchecked);
         ui->tableWidget->setCellWidget(i,0,check_box); //插入复选
         connect(check_box,SIGNAL(stateChanged(int)),this,SLOT(SaveUserSetting(int)));
@@ -153,9 +155,9 @@ void AutoReplyWindows::SaveUserSetting(QString arg)
 void AutoReplyWindows::SaveUserSetting(int arg)
 {
 
-    QTableWidgetItem *widget_item = (QTableWidgetItem *)sender();
-    int row = widget_item->row();
-    int column = widget_item->column();
+    QCheckBox *widget_item = ( QCheckBox *)sender();
+    int row = widget_item->property("row").toInt();
+    int column = widget_item->property("column").toInt();
     QString Type, p;
     Type  = QString::number(row*100+column);
     if(Qt::Checked == arg)
@@ -179,10 +181,10 @@ void AutoReplyWindows::ReceiveDataOk(QString arg)
     {
         if(Qt::Checked == ((QCheckBox*)ui->tableWidget->cellWidget(i,0))->checkState())
         {
-            contain_str = ui->tableWidget->item(i,1)->text();
+            contain_str = ((QLineEdit*)ui->tableWidget->cellWidget(i,1))->text();
             if(-1 != arg.indexOf(contain_str))
             {
-                send_str = ui->tableWidget->item(i,2)->text();
+                send_str = ((QLineEdit*)ui->tableWidget->cellWidget(i,2))->text();
                 if(0 == send_str.length())
                 {
                     send_str = arg;
