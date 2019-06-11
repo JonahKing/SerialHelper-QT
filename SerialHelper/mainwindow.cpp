@@ -161,28 +161,30 @@ void MainWindow::readread()
             unsigned int printf = 0;
             if(Qt::Checked == ui->FrameFilter1Enable->checkState())
             {
-                if((-1 !=strBuffer.indexOf(contains_string1)))
+                if((-1 ==strBuffer.indexOf(contains_string1)))
                 {
-                         printf = 1;
+                         printf |= 1;
                 }
             }
-            else if(Qt::Checked == ui->FrameFilter2Enable->checkState())
+            if(Qt::Checked == ui->FrameFilter2Enable->checkState())
             {
                 if((-1 !=strBuffer.indexOf(contains_string2)))
                 {
                    printf = 1;
                 }
             }
-            else if(Qt::Checked == ui->FrameFilter3Enable->checkState())
+            if(Qt::Checked == ui->FrameFilter3Enable->checkState())
             {
                  if((-1 !=strBuffer.indexOf(contains_string3)))
                 {
                    printf = 1;
                 }
             }
-            else
+            if((Qt::Unchecked == ui->FrameFilter3Enable->checkState())\
+             &&(Qt::Unchecked == ui->FrameFilter3Enable->checkState())\
+             &&(Qt::Unchecked == ui->FrameFilter3Enable->checkState()))
             {
-                  printf = 1;
+                printf = 1;
             }
 
             if(1 == printf)
