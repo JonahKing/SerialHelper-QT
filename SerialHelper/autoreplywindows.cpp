@@ -7,8 +7,6 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-    QLineEdit *LineEdit=new QLineEdit();
     QRegExp rx("[a-fA-F0-9 ]{160}");
     QRegExpValidator *validator = new QRegExpValidator(rx, this);
 
@@ -17,11 +15,12 @@ AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     for(int i = 0;i<ui->tableWidget->rowCount ();i++)
     {
         QCheckBox *check_box=new QCheckBox;
-        LineEdit->setProperty("row",i);
-        LineEdit->setProperty("column",0);
+        check_box->setProperty("row",i);
+        check_box->setProperty("column",0);
         check_box->setCheckState (Qt::Unchecked);
         ui->tableWidget->setCellWidget(i,0,check_box); //插入复选
         connect(check_box,SIGNAL(stateChanged(int)),this,SLOT(SaveUserSetting(int)));
+
 
     }
 

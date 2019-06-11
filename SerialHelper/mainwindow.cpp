@@ -161,9 +161,9 @@ void MainWindow::readread()
             unsigned int printf = 0;
             if(Qt::Checked == ui->FrameFilter1Enable->checkState())
             {
-                if((-1 ==strBuffer.indexOf(contains_string1)))
+                if((-1 !=strBuffer.indexOf(contains_string1)))
                 {
-                         printf |= 1;
+                         printf = 1;
                 }
             }
             if(Qt::Checked == ui->FrameFilter2Enable->checkState())
@@ -180,8 +180,8 @@ void MainWindow::readread()
                    printf = 1;
                 }
             }
-            if((Qt::Unchecked == ui->FrameFilter3Enable->checkState())\
-             &&(Qt::Unchecked == ui->FrameFilter3Enable->checkState())\
+            if((Qt::Unchecked == ui->FrameFilter1Enable->checkState())\
+             &&(Qt::Unchecked == ui->FrameFilter2Enable->checkState())\
              &&(Qt::Unchecked == ui->FrameFilter3Enable->checkState()))
             {
                 printf = 1;
