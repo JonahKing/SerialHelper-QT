@@ -6,7 +6,11 @@
 
 QT       += core gui serialport sql printsupport
 
+RC_ICONS = LanZhou.ico
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+
 
 TARGET = SerialHelper
 TEMPLATE = app
