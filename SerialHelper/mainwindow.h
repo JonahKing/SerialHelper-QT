@@ -26,10 +26,12 @@ private:
     Ui::MainWindow *ui;
     SerialConfig *serial_config;
     QTimer *timer;
+    QTimer *timer_joinnet;
     QTimer *frame_duration_timer;
     QString fileName;
     QString fileContent;//读到的文件内容
 
+    int v4_joinnet_state;
      AutoReplyWindows *p_auto_reply_windows;
      TemperatureWindows *p_temperature_windows;
 
@@ -75,6 +77,7 @@ private slots:
     void on_FrameDuration_textChanged(const QString &arg1);
     void on_AllowJoinNetButton_clicked();
     void on_ResetZigbeebutton_clicked();
+    void V4AutoJoinNet();
 };
 
 #endif // MAINWINDOW_H

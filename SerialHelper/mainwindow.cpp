@@ -91,6 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
 
+
+    timer_joinnet = new QTimer(this);
+    connect(timer_joinnet, SIGNAL(timeout()), this, SLOT(V4AutoJoinNet()));
+
     ParameterInit();
 
 
@@ -158,6 +162,88 @@ void MainWindow::readread()
         strBuffer+= receive_buff;
         if(true != serial_config->stop_display)
         {
+
+            if(0 == ui->ZigbeeVersionSelect->currentIndex())
+            {
+                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 01"))
+                {
+                    this->serial_config->allow_joint_net = true;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:green");
+                        ui->AllowJoinNetButton->setText("允许入网状态");
+                }
+
+                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 00"))
+                {
+                    this->serial_config->allow_joint_net = false;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:red");
+                        ui->AllowJoinNetButton->setText("关闭入网状态");
+                }
+
+            }
+            else if(1 == ui->ZigbeeVersionSelect->currentIndex())
+            {
+                switch(v4_joinnet_state)
+                {
+                case 0x01:
+                    if(-1 != receive_buff.indexOf("01 80 07 00 01 85 03 03"))
+                    {
+                        v4_joinnet_state = 0x02;
+                    }
+                    break;
+                case 0x02:
+                    if(-1 != receive_buff.indexOf("01 80 00 00 04 A4 00 00 00 20 03"))
+                    {
+                        v4_joinnet_state = 0x03;
+                    }
+                    break;
+                case 0x03:
+                    if(-1 != receive_buff.indexOf("01 80 00 00 04 A5 00 00 00 21 03"))
+                    {
+                        v4_joinnet_state = 0x04;
+                    }
+                    break;
+                case 0x04:
+                    if(-1 != receive_buff.indexOf("01 80 00 00 04 A0 00 00 00 24 03"))
+                    {
+                        v4_joinnet_state = 0x05;
+                    }
+                    break;
+                case 0x05:
+                    if(-1 != receive_buff.indexOf("01 80 00 00 04 E6 00 2B 00 49 03"))
+                    {
+                        v4_joinnet_state = 0x06;
+                    }
+                    break;
+                case 0x06:
+                    if(-1 != receive_buff.indexOf("01 80 14 00 01 94 01 03"))
+                    {
+                        v4_joinnet_state = 0x00;
+                        this->serial_config->allow_joint_net = true;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:green");
+                        ui->AllowJoinNetButton->setText("允许入网状态");
+                    }
+                    if(-1 != receive_buff.indexOf("01 80 14 00 01 95 00 03"))
+                    {
+                        v4_joinnet_state = 0x00;
+                        this->serial_config->allow_joint_net = false;
+                        QPalette pal = ui->AllowJoinNetButton->palette();
+                        ui->AllowJoinNetButton->setPalette(pal);
+                        ui->AllowJoinNetButton->setStyleSheet("background-color:red");
+                        ui->AllowJoinNetButton->setText("关闭入网状态");
+                    }
+                    break;
+
+                }
+            }
+
+
+
             unsigned int printf = 0;
             if(Qt::Checked == ui->FrameFilter1Enable->checkState())
             {
@@ -194,24 +280,6 @@ void MainWindow::readread()
                 emit BuffReceivefinished(receive_buff);
 
                 QString send_string = receive_buff;
-
-                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 01"))
-                {
-                    this->serial_config->allow_joint_net = true;
-                        QPalette pal = ui->AllowJoinNetButton->palette();
-                        ui->AllowJoinNetButton->setPalette(pal);
-                        ui->AllowJoinNetButton->setStyleSheet("background-color:green");
-                        ui->AllowJoinNetButton->setText("允许入网状态");
-                }
-
-                if(-1 != receive_buff.indexOf("21 08 00 00 00 00 25 00"))
-                {
-                    this->serial_config->allow_joint_net = false;
-                        QPalette pal = ui->AllowJoinNetButton->palette();
-                        ui->AllowJoinNetButton->setPalette(pal);
-                        ui->AllowJoinNetButton->setStyleSheet("background-color:red");
-                        ui->AllowJoinNetButton->setText("关闭入网状态");
-                }
 
                 if(this->serial_config->allow_joint_net == true)
                 {
@@ -668,6 +736,8 @@ void MainWindow::on_FrameDuration_textChanged(const QString &arg1)
 
 void MainWindow::on_AllowJoinNetButton_clicked()
 {
+    if(0 == ui->ZigbeeVersionSelect->currentIndex())//V3
+    {
         if(false == this->serial_config->allow_joint_net)
         {
             AutoSend("22 09 00 00 00 00 00 25 01");
@@ -676,6 +746,17 @@ void MainWindow::on_AllowJoinNetButton_clicked()
         {
              AutoSend("22 09 00 00 00 00 00 25 00");
         }
+    }
+    else if(1 == ui->ZigbeeVersionSelect->currentIndex())//V3
+    {
+        if(false == this->serial_config->allow_joint_net)
+        {
+            v4_joinnet_state = 1;
+            timer_joinnet->start(100);
+
+        }
+    }
+
 
 }
 void MainWindow::on_ResetZigbeebutton_clicked()
@@ -683,3 +764,49 @@ void MainWindow::on_ResetZigbeebutton_clicked()
     QString send_str = "01 0C "+ ui->ZigbeeMAC->text()+"AA 06 89 00 01 8E";
     AutoSend(send_str);
 }
+
+void MainWindow::V4AutoJoinNet()
+{
+    static int current_index = 0;
+
+    if(current_index == v4_joinnet_state)
+    {
+        current_index = 0;
+        v4_joinnet_state = 0;
+        timer_joinnet->stop();
+        return;
+    }
+    if(1 == v4_joinnet_state)
+    {
+        AutoSend("01 02 10 12 02 10 02 10 12 03");
+        timer->start(100);
+    }
+    else if(2 == v4_joinnet_state)
+    {
+        AutoSend("01 02 10 20 02 10 02 18 28 02 10 02 10 02 10 02 10 02 10 02 10 02 10 02 10 03");
+        timer->start(100);
+    }
+    else if(3 == v4_joinnet_state)
+    {
+        AutoSend("01 02 10 21 02 10 02 14 2D 02 10 02 10 02 18 02 10 03");
+        timer->start(100);
+    }
+    else if(4 == v4_joinnet_state)
+    {
+        AutoSend("01 02 10 24 02 10 02 10 24 03");
+        timer->start(100);
+    }
+    else if(5 == v4_joinnet_state)
+    {
+        AutoSend("01 02 10 49 02 10 02 14 72 FF FC 3C 02 10 03");
+    }
+    else if(6 == v4_joinnet_state)
+    {
+        AutoSend("01 80 00 00 04 90 00 00 00 14 03");
+    }
+
+    current_index = v4_joinnet_state;
+}
+
+
+
