@@ -64,15 +64,42 @@ void TemperatureWindows::UpdateTemperatureGraph(void)
         ui->widget->graph(i)->addData(count,temperature[i].temperature_value);
     }
     ui->widget->replot();
+    //time_out++;
 }
 
 void TemperatureWindows::ReceiveTemperature(QString arg)
 {
-    QString contain_str = "23 04";
-    if(-1 == arg.indexOf(contain_str))
+    QString contain_str1 =NULL;
+    QString contain_str2 =NULL;
+    int index = 0;
+
+    if(1 == ui->DevicesSelect->currentIndex())
+    {
+        contain_str1 = "23 04";
+        contain_str2 = "24 03";
+        index = 45;
+        if(-1 != arg.indexOf(contain_str2))
+        {
+            index = 45;
+        }
+    }
+    else if(0 == ui->DevicesSelect->currentIndex())
+    {
+        contain_str1 = "23 04";
+        contain_str2 = "24 04";
+        index = 51;
+        if(-1 != arg.indexOf(contain_str2))
+        {
+            index = 54;
+        }
+    }
+
+    if((-1 == arg.indexOf(contain_str1))\
+     &&(-1 == arg.indexOf(contain_str2)))
     {
         return ;
     }
+     //time_out = 0;
         if(0 == temperature[0].zigbee_str.length())
         {
              temperature[0].zigbee_str = arg.mid(6,12);
@@ -101,7 +128,7 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
     {
         if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
         {
-            temperature[i].temperature_str = arg.mid(45,2);
+            temperature[i].temperature_str = arg.mid(index,2);
             bool ok;
             temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
         }
