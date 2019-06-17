@@ -1,6 +1,12 @@
 #include "autoreplywindows.h"
 #include "ui_autoreplywindows.h"
 #include <QSettings>
+#include <QAxObject>
+#include <QDir>
+#include <QDebug>
+#include "ExcelManger.h"
+#include <QFileDialog>
+#include <QMessageBox>
 AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AutoReplyWindows)
@@ -208,3 +214,37 @@ void AutoReplyToWindows(QString)
 {
     ;
 }
+
+void AutoReplyWindows::on_InsertExcel_clicked()
+{
+        fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),QDir::homePath(),tr("文本文件 (*.*);;"));
+        if(!fileName.isEmpty())
+        {
+            QString strPath = "C:/Users/Administrator/Desktop/test.xlsx";
+            QFile file(fileName);
+            if(!file.exists())
+             {
+                   qDebug() << "文件不存在";
+             }
+            else
+             {
+                    //文件类型粗略检查
+                    if(!strPath.right(4).contains("xls"))
+                    {
+                        qDebug() << "只操作xlsx、xls文件";
+                    }
+                }
+
+                ExcelManger em;
+                em.Test(fileName);
+        }
+        else
+        {
+                QMessageBox box(QMessageBox::Question,"提示","打开文件失败！");
+                box.setIcon(QMessageBox::Warning);
+                box.setStandardButtons (QMessageBox::Ok);
+                box.setButtonText (QMessageBox::Ok,QString("确定"));
+                box.exec();
+        }
+}
+

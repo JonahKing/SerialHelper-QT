@@ -11,9 +11,13 @@ TemperatureWindows::TemperatureWindows(QWidget *parent) :
     this->setWindowTitle("温度曲线");
     //ui->widget->setBackground(QBrush(Qt::black));
     ui->widget->xAxis->setLabel("时间轴(sec)");
-    ui->widget->xAxis->setRange(0,50000);
+    ui->widget->xAxis->setRange(0,300);
     ui->widget->yAxis->setLabel("温度(°C)");
     ui->widget->yAxis->setRange(0,50);
+
+
+    ui->widget->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom| QCP::iSelectAxes |
+                                      QCP::iSelectLegend | QCP::iSelectPlottables);
 
 
     for(int i = 0;i<4;i++)
@@ -97,7 +101,7 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
     {
         if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
         {
-            temperature[i].temperature_str = arg.mid(51,2);
+            temperature[i].temperature_str = arg.mid(45,2);
             bool ok;
             temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
         }

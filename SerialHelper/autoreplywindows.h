@@ -14,9 +14,13 @@ class AutoReplyWindows : public QMainWindow
 signals:
     void AutoReplyToWindows(QString arg);
 public:
+
+    QString fileName;
+
     explicit AutoReplyWindows(QWidget *parent = 0);
     void ParameterInit(void);
     ~AutoReplyWindows();
+    void readFile(void);
 
 private:
     Ui::AutoReplyWindows *ui;
@@ -26,6 +30,7 @@ private slots:
     void SaveUserSetting(QString arg);
     void send_button_fun(bool);
 
+    void on_InsertExcel_clicked();
 };
 
 #endif // AUTOREPLYWINDOWS_H
