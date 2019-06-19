@@ -27,7 +27,7 @@ public:
     explicit TemperatureWindows(QWidget *parent = 0);
     ~TemperatureWindows();
     QTimer *timer;
-    GraphData temperature[4];
+    GraphData temperature[10];
 
 
 private:

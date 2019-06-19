@@ -7,11 +7,16 @@
 #include "ExcelManger.h"
 #include <QFileDialog>
 #include <QMessageBox>
+
+
+
 AutoReplyWindows::AutoReplyWindows(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AutoReplyWindows)
 {
     ui->setupUi(this);
+
+
 
     QRegExp rx("[a-fA-F0-9 ]{160}");
     QRegExpValidator *validator = new QRegExpValidator(rx, this);
@@ -210,6 +215,18 @@ void AutoReplyWindows::send_button_fun(bool)
             +((QLineEdit*)ui->MunualSendTabWidget->cellWidget(row,2))->text();
     emit AutoReplyToWindows(send_str);
 }
+
+
+void AutoReplyWindows::Excel_send_button_fun(bool)
+{
+    QPushButton *button = (QPushButton*)sender();
+    int row = button->property("row").toInt();
+    int column = button->property("column").toInt();
+    QString send_str = ((QLineEdit*)ui->ExceltableWidget->cellWidget(row,column-2))->text();
+    emit AutoReplyToWindows(send_str);
+}
+
+
 void AutoReplyToWindows(QString)
 {
     ;
@@ -236,7 +253,7 @@ void AutoReplyWindows::on_InsertExcel_clicked()
                 }
 
                 ExcelManger em;
-                em.Test(fileName);
+                em.Test(fileName,this);
         }
         else
         {

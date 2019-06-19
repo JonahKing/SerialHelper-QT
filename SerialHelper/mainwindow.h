@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow
 signals:
     void BuffReceivefinished(QString);
 public:
+    AutoReplyWindows *p_auto_reply_windows;
     explicit MainWindow(QWidget *parent = 0);
     void ParameterSave(QString Type, QString p);
     ~MainWindow();
@@ -32,7 +33,7 @@ private:
     QString fileContent;//读到的文件内容
 
     int v4_joinnet_state;
-     AutoReplyWindows *p_auto_reply_windows;
+
      TemperatureWindows *p_temperature_windows;
 
      void readFile();

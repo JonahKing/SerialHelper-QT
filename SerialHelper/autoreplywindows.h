@@ -21,15 +21,16 @@ public:
     void ParameterInit(void);
     ~AutoReplyWindows();
     void readFile(void);
+    Ui::AutoReplyWindows *ui;
 
 private:
-    Ui::AutoReplyWindows *ui;
+
 private slots:
     void ReceiveDataOk(QString arg);
     void SaveUserSetting(int);
     void SaveUserSetting(QString arg);
     void send_button_fun(bool);
-
+    void Excel_send_button_fun(bool);
     void on_InsertExcel_clicked();
 };
 
