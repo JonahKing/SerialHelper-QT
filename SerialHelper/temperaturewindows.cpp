@@ -182,28 +182,34 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
         }
      }
 
-    for(int i = 0;i<7;i++)
+    if(-1 == arg.indexOf(contain_str3))
     {
-        if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+        for(int i = 0;i<7;i++)
         {
-            temperature[i].temperature_str = arg.mid(index,2);
-            bool ok;
-            temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
+            if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+            {
+                temperature[i].temperature_str = arg.mid(index,2);
+                bool ok;
+                temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
+            }
         }
     }
-    for(int i = 7;i<9;i++)
+    else
     {
-        if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+        for(int i = 7;i<9;i++)
         {
-            bool ok;
-            temperature[i].temperature_str = arg.mid(30,2);
-            temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
-            temperature[i].temperature_value = temperature_temp*256;
+            if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+            {
+                bool ok;
+                temperature[i].temperature_str = arg.mid(30,2);
+                temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
+                temperature[i].temperature_value = temperature_temp*256;
 
-            temperature[i].temperature_str = arg.mid(33,2);
-            temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
-            temperature[i].temperature_value = (temperature[i].temperature_value+temperature_temp)/10;
+                temperature[i].temperature_str = arg.mid(33,2);
+                temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
+                temperature[i].temperature_value = (temperature[i].temperature_value+temperature_temp)/10;
 
+            }
         }
     }
 }

@@ -122,7 +122,7 @@ void AutoReplyWindows::ParameterInit(void)
     {
         for(int j = 0;j<ui->MunualSendTabWidget->columnCount();j++)
         {
-            if(j != (ui->MunualSendTabWidget->columnCount()-2))
+            if(j != (this->ui->MunualSendTabWidget->columnCount()-2))
             {
                 ((QLineEdit*)ui->MunualSendTabWidget->cellWidget(i,j))->setText(settings.value(QString::number(10000+i*100+j)).toString());
              }
@@ -217,7 +217,7 @@ void AutoReplyWindows::send_button_fun(bool)
 }
 
 
-void AutoReplyWindows::Excel_send_button_fun(bool)
+void AutoReplyWindows::Excel_send_button_fun()
 {
     QPushButton *button = (QPushButton*)sender();
     int row = button->property("row").toInt();
@@ -264,4 +264,3 @@ void AutoReplyWindows::on_InsertExcel_clicked()
                 box.exec();
         }
 }
-

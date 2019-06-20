@@ -496,6 +496,13 @@
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="InsertExcel">
+           <property name="text">
+            <string>导入excel</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEdit"/>
          </item>
@@ -506,14 +513,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="InsertExcel">
-           <property name="text">
-            <string>导入excel</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
+         <item row="0" column="4">
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -526,8 +526,15 @@
            </property>
           </spacer>
          </item>
-         <item row="1" column="0" colspan="4">
+         <item row="1" column="0" colspan="5">
           <widget class="QTableWidget" name="ExceltableWidget"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="SendButton">
+           <property name="text">
+            <string>SendButton</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

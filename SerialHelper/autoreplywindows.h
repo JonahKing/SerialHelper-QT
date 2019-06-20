@@ -30,7 +30,7 @@ private slots:
     void SaveUserSetting(int);
     void SaveUserSetting(QString arg);
     void send_button_fun(bool);
-    void Excel_send_button_fun(bool);
+    void Excel_send_button_fun();
     void on_InsertExcel_clicked();
 };
 
