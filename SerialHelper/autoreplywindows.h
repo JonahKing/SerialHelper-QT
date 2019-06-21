@@ -32,6 +32,7 @@ private slots:
     void send_button_fun(bool);
     void Excel_send_button_fun();
     void on_InsertExcel_clicked();
+    void on_MacReplace_stateChanged(int arg1);
 };
 
 #endif // AUTOREPLYWINDOWS_H

@@ -264,3 +264,27 @@ void AutoReplyWindows::on_InsertExcel_clicked()
                 box.exec();
         }
 }
+
+void AutoReplyWindows::on_MacReplace_stateChanged(int arg1)
+{
+    QString replace_str = ui->lineEdit->text();
+    if(0 == replace_str.length())
+    {
+        return;
+    }
+    if(Qt::Checked == arg1)
+    {
+        for(int row =0;row < ui->ExceltableWidget->rowCount();row++)
+        {
+            QLineEdit *line_edit = (QLineEdit*)(ui->ExceltableWidget->cellWidget(row,0));
+            QString str = line_edit->text();
+            if(0 != str.length()&&(0 == str.indexOf("01")))
+            {
+                str.replace(6,11,replace_str);
+                line_edit->setText(str);
+            }
+        }
+    }
+
+}
+
