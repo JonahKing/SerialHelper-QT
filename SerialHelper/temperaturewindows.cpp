@@ -30,13 +30,14 @@ TemperatureWindows::TemperatureWindows(QWidget *parent) :
     this->temperature[1].pen_color = Qt::red;
     this->temperature[2].pen_color = Qt::green;
     this->temperature[3].pen_color = Qt::black;
-    this->temperature[4].pen_color = Qt::yellow;
+    this->temperature[4].pen_color = Qt::darkGray;
     this->temperature[5].pen_color = Qt::cyan;
     this->temperature[6].pen_color = Qt::magenta;
 
 
     this->temperature[7].pen_color = Qt::darkRed;
     this->temperature[8].pen_color = Qt::darkGreen;
+    this->temperature[9].pen_color = Qt::darkBlue;
    // darkBlue,
     for(int i = 0; i<10;i++)
     {
@@ -83,8 +84,23 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
     int index = 0;
 
     int temperature_temp = 0;
-    if(1 == ui->DevicesSelect->currentIndex())
+
+    temperature[0].zigbee_str = ui->lineEdit->text();
+    temperature[1].zigbee_str = ui->lineEdit_2->text();
+    temperature[2].zigbee_str = ui->lineEdit_3->text();
+    temperature[3].zigbee_str = ui->lineEdit_4->text();
+    temperature[4].zigbee_str = ui->lineEdit_5->text();
+    temperature[5].zigbee_str = ui->lineEdit_6->text();
+    temperature[6].zigbee_str = ui->lineEdit_7->text();
+    temperature[7].zigbee_str = ui->lineEdit_8->text();
+    temperature[8].zigbee_str = ui->lineEdit_9->text();
+    temperature[9].zigbee_str = ui->lineEdit_10->text();
+
+
+    int devices_type = ui->DevicesSelect->currentIndex();
+    switch(devices_type)
     {
+        case 1: //拉低新风
         contain_str1 = "23 04";
         contain_str2 = "24 03";
         index = 45;
@@ -92,9 +108,8 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
         {
             index = 45;
         }
-    }
-    else if(0 == ui->DevicesSelect->currentIndex())
-    {
+        break;
+    case 0: //琴键温控器
         contain_str1 = "23 04";
         contain_str2 = "24 04";
         index = 51;
@@ -102,7 +117,12 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
         {
             index = 54;
         }
+        break;
+     case 2:
+        break;
     }
+
+
 
     if((-1 == arg.indexOf(contain_str1))\
      &&(-1 == arg.indexOf(contain_str2))\
@@ -110,105 +130,36 @@ void TemperatureWindows::ReceiveTemperature(QString arg)
     {
         return ;
     }
-    if(-1 == arg.indexOf(contain_str3))
+    if(2 != devices_type)// 不是七合一温控器
     {
-        if(0 == temperature[0].zigbee_str.length())
+        if(-1 == arg.indexOf(contain_str3))
         {
-             temperature[0].zigbee_str = arg.mid(6,12);
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-              &&(0 == temperature[1].zigbee_str.length()))
-        {
-            temperature[1].zigbee_str = arg.mid(6,12);
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-             && (-1 == arg.indexOf(temperature[1].zigbee_str))
-             && (0 == temperature[2].zigbee_str.length()))
-        {
-            temperature[2].zigbee_str = arg.mid(6,12);
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-             && (-1 == arg.indexOf(temperature[1].zigbee_str))
-             && (-1 == arg.indexOf(temperature[2].zigbee_str))
-             &&(0 == temperature[3].zigbee_str.length()))
-        {
-            temperature[3].zigbee_str = arg.mid(6,12);
-
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-             && (-1 == arg.indexOf(temperature[1].zigbee_str))
-             && (-1 == arg.indexOf(temperature[2].zigbee_str))
-             && (-1 == arg.indexOf(temperature[3].zigbee_str))
-             &&(0 == temperature[4].zigbee_str.length()))
-        {
-            temperature[4].zigbee_str = arg.mid(6,12);
-
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-             && (-1 == arg.indexOf(temperature[1].zigbee_str))
-             && (-1 == arg.indexOf(temperature[2].zigbee_str))
-             && (-1 == arg.indexOf(temperature[3].zigbee_str))
-             && (-1 == arg.indexOf(temperature[4].zigbee_str))
-             &&(0 == temperature[5].zigbee_str.length()))
-        {
-            temperature[5].zigbee_str = arg.mid(6,12);
-
-        }
-        else if((-1 == arg.indexOf(temperature[0].zigbee_str))
-             && (-1 == arg.indexOf(temperature[1].zigbee_str))
-             && (-1 == arg.indexOf(temperature[2].zigbee_str))
-             && (-1 == arg.indexOf(temperature[3].zigbee_str))
-             && (-1 == arg.indexOf(temperature[4].zigbee_str))
-             && (-1 == arg.indexOf(temperature[5].zigbee_str))
-             &&(0 == temperature[6].zigbee_str.length()))
-        {
-            temperature[6].zigbee_str = arg.mid(6,12);
-
-        }
-    }
-
-    else
-    {
-        if(0 == temperature[7].zigbee_str.length())
-        {
-            temperature[7].zigbee_str = arg.mid(6,12);
-
-        }
-        else if((-1 == arg.indexOf(temperature[7].zigbee_str))
-         &&(0 == temperature[8].zigbee_str.length()))
-        {
-            temperature[8].zigbee_str = arg.mid(6,12);
-
-        }
-     }
-
-    if(-1 == arg.indexOf(contain_str3))
-    {
-        for(int i = 0;i<7;i++)
-        {
-            if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+            for(int i = 0;i<7;i++)
             {
-                temperature[i].temperature_str = arg.mid(index,2);
-                bool ok;
-                temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
+                if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+                {
+                    temperature[i].temperature_str = arg.mid(index,2);
+                    bool ok;
+                    temperature[i].temperature_value = temperature[i].temperature_str.toInt(&ok,16);
+                }
             }
         }
-    }
-    else
-    {
-        for(int i = 7;i<9;i++)
+        else
         {
-            if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+            for(int i = 7;i<9;i++)
             {
-                bool ok;
-                temperature[i].temperature_str = arg.mid(30,2);
-                temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
-                temperature[i].temperature_value = temperature_temp*256;
+                if(-1 != arg.indexOf(temperature[i].zigbee_str)&&(0 != temperature[i].zigbee_str.length()))
+                {
+                    bool ok;
+                    temperature[i].temperature_str = arg.mid(30,2);
+                    temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
+                    temperature[i].temperature_value = temperature_temp*256;
 
-                temperature[i].temperature_str = arg.mid(33,2);
-                temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
-                temperature[i].temperature_value = (temperature[i].temperature_value+temperature_temp)/10;
+                    temperature[i].temperature_str = arg.mid(33,2);
+                    temperature_temp = temperature[i].temperature_str.toInt(&ok,16);
+                    temperature[i].temperature_value = (temperature[i].temperature_value+temperature_temp)/10;
 
+                }
             }
         }
     }

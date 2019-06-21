@@ -6,42 +6,63 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>16777190</width>
+    <height>16777193</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <widget class="QCustomPlot" name="widget" native="true">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>30</y>
-      <width>721</width>
-      <height>491</height>
+      <y>143</y>
+      <width>701</width>
+      <height>291</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
    </widget>
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>0</y>
-      <width>142</width>
-      <height>22</height>
+      <x>23</x>
+      <y>10</y>
+      <width>701</width>
+      <height>109</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item row="0" column="0" colspan="2">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>设备选择</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QComboBox" name="DevicesSelect">
        <item>
         <property name="text">
@@ -55,6 +76,40 @@
        </item>
       </widget>
      </item>
+     <item row="1" column="5">
+      <widget class="QLineEdit" name="lineEdit_5"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLineEdit" name="lineEdit_7"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEdit_6"/>
+     </item>
+     <item row="2" column="4">
+      <widget class="QLineEdit" name="lineEdit_9"/>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="lineEdit_3"/>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLineEdit" name="lineEdit_4"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="lineEdit_2"/>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="lineEdit_8"/>
+     </item>
+     <item row="2" column="5">
+      <widget class="QLineEdit" name="lineEdit_10"/>
+     </item>
+     <item row="1" column="0" rowspan="2">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>MAC地址</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -63,7 +118,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>16777190</width>
      <height>23</height>
     </rect>
    </property>
