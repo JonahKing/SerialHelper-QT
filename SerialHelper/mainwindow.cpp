@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->SendDataTimming3,SIGNAL(stateChanged(int)),this,SLOT(on_SendDataTimming_stateChanged(int)));
 
     connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_auto_reply_windows,SLOT(ReceiveDataOk(QString)));
-    connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_temperature_windows,SLOT(ReceiveTemperature(QString)));
+    connect(this,SIGNAL(BuffReceivefinished(QString)),this->p_temperature_windows,SLOT(ReceiveDataOk(QString)));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerSend()));
 

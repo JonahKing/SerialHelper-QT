@@ -18,6 +18,28 @@ public:
 };
 
 
+class SevenInOne
+{
+public:
+   QColor pen_color;
+   QString zigbee_str;
+   int ZIgbee_ID;
+   float temperature_value;
+   float humidity_value;
+   float illumination;
+   float dust;
+   float CO2;
+   float methanal;
+   float noise;
+
+};
+
+
+
+
+
+
+
 
 class TemperatureWindows : public QMainWindow
 {
@@ -29,12 +51,17 @@ public:
     QTimer *timer;
     GraphData temperature[10];
 
+    SevenInOne devices_seven_in_one[10];
+
+    void UpdateQinJianTemperature(QString arg);
+    void UpdateSevenInOne(QString arg);
+
 
 private:
     Ui::TemperatureWindows *ui;
 private slots:
         void UpdateTemperatureGraph(void);
-        void ReceiveTemperature(QString arg);
+        void ReceiveDataOk(QString arg);
 };
 
 #endif // TEMPERATUREWINDOWS_H
